@@ -4,6 +4,7 @@ import ScreenState
 import AppViewModel
 import View.LoginSignup.SignIn
 import View.LoginSignup.SignUp
+import View.LoginSignup.UpdatePassword
 import View.LoginSignup.VerifyCodeScreen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -58,6 +59,14 @@ fun AppScreen(viewModel: AppViewModel) {
             exit = fadeOut() + slideOutHorizontally()
         ) {
             VerifyCodeScreen(viewModel::navigateToLastScreen)
+        }
+
+        AnimatedVisibility(
+            visible = targetState == ScreenState.UPDATEPASSWORDSCREEN,
+            enter = fadeIn() + slideInHorizontally(),
+            exit = fadeOut() + slideOutHorizontally()
+        ) {
+            UpdatePassword(viewModel::navigateToLastScreen)
         }
     }
 }

@@ -68,7 +68,7 @@ fun SignIn(
             HeaderSignInUp(currentScreen)
             EmailTextField()
             PasswordTextField()
-            ForgotPasswordTextField()
+            ForgotPasswordTextField(navigateToAnotherScreen)
             SignInUpButton(currentScreen, navigateToAnotherScreen)
             DividerWithText()
             Row(
@@ -163,7 +163,7 @@ fun TwachaButton(
 }
 
 @Composable
-fun ForgotPasswordTextField() {
+fun ForgotPasswordTextField(navigateToAnotherScreen: (ScreenState, Boolean) -> Unit) {
     val annotatedString = buildAnnotatedString {
         withStyle(
             style = SpanStyle(
@@ -185,7 +185,7 @@ fun ForgotPasswordTextField() {
                 .align(Alignment.End),
             text = annotatedString,
             onClick = { offset ->
-
+                navigateToAnotherScreen(ScreenState.UPDATEPASSWORDSCREEN, false)
             }
         )
     }
@@ -205,7 +205,7 @@ fun HeaderSignInUp(currentScreen: () -> ScreenState) {
 }
 
 @Composable
-fun Header(heading: String, subheading: String, paddingTop: Dp) {
+fun Header(heading: String, subheading: String, paddingTop: Dp = 20.dp) {
     Column (
         modifier = Modifier
             .padding(horizontal = 5.dp),
@@ -255,7 +255,7 @@ fun EmailTextField() {
 }
 
 @Composable
-fun PasswordTextField() {
+fun PasswordTextField(labelText : String = "Password") {
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
@@ -269,7 +269,7 @@ fun PasswordTextField() {
             unfocusedLabelColor = Color.Black
         ),
         onValueChange = { password = it },
-        label = { Text("Password") },
+        label = { Text(labelText) },
         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
         visualTransformation = PasswordVisualTransformation(),
         modifier = Modifier.fillMaxWidth()

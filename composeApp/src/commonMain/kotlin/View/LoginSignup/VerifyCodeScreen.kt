@@ -33,6 +33,7 @@ fun VerifyCodeScreen(
         Header("Verify Code", "Please enter the code we just sent to example@email.com.", 20.dp)
         PinView()
         ResendOTPView()
+        TwachaButton("Verify") {}
     }
 }
 
