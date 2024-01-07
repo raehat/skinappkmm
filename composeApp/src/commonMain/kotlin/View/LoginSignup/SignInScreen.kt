@@ -1,6 +1,6 @@
 package View.LoginSignup
 
-import AppState
+import ScreenState
 import Theme.AppColor
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,12 +45,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.twacha.MR
 
 @Composable
-fun SignIn(navigateToAnotherScreen: (AppState) -> Unit) {
+fun SignIn(
+    currentScreen: () -> ScreenState,
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -61,30 +65,83 @@ fun SignIn(navigateToAnotherScreen: (AppState) -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Header()
+            HeaderSignInUp(currentScreen)
             EmailTextField()
             PasswordTextField()
             ForgotPasswordTextField()
-            SignInButton(navigateToAnotherScreen)
+            SignInUpButton(currentScreen, navigateToAnotherScreen)
             DividerWithText()
             Row(
                modifier = Modifier.fillMaxWidth(0.5f)
                    .padding(top = 40.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                GoogleLogin()
-                FacebookLogin()
+                GoogleLoginSignUp(currentScreen)
+                FacebookLoginSignUp(currentScreen)
             }
+            LoginSignUpClickableText(currentScreen, navigateToAnotherScreen)
 
         }
     }
 }
 
 @Composable
-fun SignInButton(navigateToAnotherScreen: (AppState) -> Unit) {
+fun LoginSignUpClickableText(
+    currentScreen: () -> ScreenState,
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+) {
+    val annotatedString = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                color = Color.Blue,
+                textDecoration = TextDecoration.Underline,
+                fontSize = 14.sp
+            )
+        ) {
+            if (currentScreen() == ScreenState.SIGNUPSCREEN) append("Sign Up") else append("Sign In")
+        }
+    }
+    Row (
+        modifier = Modifier
+            .padding(top = 30.dp)
+    ) {
+        Text(
+            text = if (currentScreen() == ScreenState.SIGNUPSCREEN) "Don't have an account?" else "Already have an account?" ,
+            fontSize = 14.sp,
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .padding(end = 4.dp)
+        )
+        ClickableText(
+            onClick = {
+                if (currentScreen() == ScreenState.SIGNUPSCREEN)
+                    navigateToAnotherScreen(ScreenState.SIGNINSCREEN, false)
+                else
+                    navigateToAnotherScreen(ScreenState.SIGNUPSCREEN, false)
+            },
+            text = annotatedString
+        )
+    }
+}
+
+@Composable
+fun SignInUpButton(
+    currentScreen: () -> ScreenState,
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+) {
+    TwachaButton(
+        buttonText =  if (currentScreen() == ScreenState.SIGNUPSCREEN) "Sign Up" else "Sign In"
+    ) { navigateToAnotherScreen(ScreenState.VERIFYCODESCREEN, true) }
+}
+
+@Composable
+fun TwachaButton(
+    buttonText: String,
+    buttonOnClick: () -> Unit
+) {
     Column () {
         Button(
-            onClick = { navigateToAnotherScreen(AppState.SIGNINSCREEN) },
+            onClick = buttonOnClick,
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = AppColor.PURPLE
             ),
@@ -97,7 +154,7 @@ fun SignInButton(navigateToAnotherScreen: (AppState) -> Unit) {
             Text(
                 modifier = Modifier
                     .padding(3.dp),
-                text = "Sign In",
+                text = buttonText,
                 fontSize = 16.sp,
                 color = Color.White,
             )
@@ -135,20 +192,40 @@ fun ForgotPasswordTextField() {
 }
 
 @Composable
-fun Header() {
-    Text(
+fun HeaderSignInUp(currentScreen: () -> ScreenState) {
+    when (currentScreen()) {
+        ScreenState.SIGNINSCREEN -> {
+            Header("Sign In", "Hi! We missed you, sign in to continue", 100.dp)
+        }
+        ScreenState.SIGNUPSCREEN -> {
+            Header("Create Account", "Fill your information below or register with your social account", 100.dp)
+        }
+        else -> {}
+    }
+}
+
+@Composable
+fun Header(heading: String, subheading: String, paddingTop: Dp) {
+    Column (
         modifier = Modifier
-            .padding(0.dp, 100.dp, 0.dp, 10.dp),
-        text = "Sign In",
-        fontSize = 30.sp,
-        fontWeight = FontWeight.Bold,
-    )
-    Text(
-        modifier = Modifier,
-        text = "Hi! Sign in/ Sign up to continue",
-        fontWeight = FontWeight.Light,
-        fontSize = 14.sp,
-    )
+            .padding(horizontal = 5.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(0.dp, paddingTop, 0.dp, 10.dp),
+            text = heading,
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = subheading,
+            fontWeight = FontWeight.Light,
+            fontSize = 14.sp,
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 @Composable
@@ -234,15 +311,16 @@ fun DividerWithText() {
 }
 
 @Composable
-fun GoogleLogin() {
+fun GoogleLoginSignUp(currentScreen: () -> ScreenState) {
     Box(
         modifier = Modifier
             .size(60.dp)
             .border(
-                width = 2.dp,
+                width = 1.dp,
                 color = Color.Black,
                 shape = CircleShape
-            ),
+            )
+            .padding(10.dp),
     ) {
         Image(
             painter = dev.icerock.moko.resources.compose.painterResource(MR.images.google),
@@ -252,15 +330,16 @@ fun GoogleLogin() {
 }
 
 @Composable
-fun FacebookLogin() {
+fun FacebookLoginSignUp(currentScreen: () -> ScreenState) {
     Box(
         modifier = Modifier
             .size(60.dp)
             .border(
-                width = 2.dp,
+                width = 1.dp,
                 color = Color.Black,
                 shape = CircleShape
-            ),
+            )
+            .padding(10.dp),
     ) {
         Image(
             painter = dev.icerock.moko.resources.compose.painterResource(MR.images.facebook),

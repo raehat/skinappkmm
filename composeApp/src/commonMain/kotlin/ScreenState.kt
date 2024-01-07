@@ -1,0 +1,8 @@
+enum class ScreenState {
+    SPLASHSCREEN,
+    HOMESCREEN,
+    SIGNINSCREEN,
+    SIGNUPSCREEN,
+    VERIFYCODESCREEN
+}
+

@@ -1,6 +1,6 @@
 package View
 
-import AppState
+import ScreenState
 import Theme.AppColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navigateToAnotherScreen: (AppState) -> Unit) {
+fun SplashScreen(navigateToAnotherScreen: (ScreenState) -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize().background(AppColor.PURPLE)
     ) {
@@ -30,7 +30,7 @@ fun SplashScreen(navigateToAnotherScreen: (AppState) -> Unit) {
 
         LaunchedEffect(Unit) {
             delay(1000L) // 1000 milliseconds = 1 second
-            navigateToAnotherScreen(AppState.HOMESCREEN)
+            navigateToAnotherScreen(ScreenState.HOMESCREEN)
         }
     }
 }
