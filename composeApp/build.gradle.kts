@@ -30,7 +30,7 @@ kotlin {
         }
     }
     
-    jvm("desktop")
+//    jvm("desktop")
     
     listOf(
         iosX64(),
@@ -44,11 +44,12 @@ kotlin {
     }
     
     sourceSets {
-        val desktopMain by getting
+//        val desktopMain by getting
 
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -57,12 +58,14 @@ kotlin {
             implementation(compose.ui)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
-
-
+            implementation(libs.ktor.client.core)
         }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
+//        desktopMain.dependencies {
+//            implementation(compose.desktop.currentOs)
+//        }
     }
 }
 
@@ -117,17 +120,17 @@ dependencies {
 }
 
 
-compose.desktop {
-    application {
-        mainClass = "MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.example.twacha"
-            packageVersion = "1.0.0"
-        }
-    }
-}
+//compose.desktop {
+//    application {
+//        mainClass = "MainKt"
+//
+//        nativeDistributions {
+//            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+//            packageName = "com.example.twacha"
+//            packageVersion = "1.0.0"
+//        }
+//    }
+//}
 
 compose.experimental {
     web.application {}
