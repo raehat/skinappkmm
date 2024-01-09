@@ -47,14 +47,14 @@ fun SignUp(
             }
             SignInUpButton(currentScreen, navigateToAnotherScreen, email, password, getEmail, setEmail)
             DividerWithText()
-            Row(
-                modifier = Modifier.fillMaxWidth(0.5f)
-                    .padding(top = 40.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                GoogleLoginSignUp(currentScreen)
-                FacebookLoginSignUp(currentScreen)
-            }
+//            Row(
+//                modifier = Modifier.fillMaxWidth(0.5f)
+//                    .padding(top = 40.dp),
+//                horizontalArrangement = Arrangement.SpaceEvenly,
+//            ) {
+//                GoogleLoginSignUp(currentScreen)
+//                FacebookLoginSignUp(currentScreen)
+//            }
             LoginSignUpClickableText(currentScreen, navigateToAnotherScreen)
 
         }

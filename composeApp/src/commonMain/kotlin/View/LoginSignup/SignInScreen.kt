@@ -83,7 +83,7 @@ fun SignIn(
             PasswordTextField() {
                 password = it
             }
-            ForgotPasswordTextField(navigateToAnotherScreen, email)
+            ForgotPasswordTextField(navigateToAnotherScreen, email, setEmail)
             SignInUpButton(
                 currentScreen,
                 navigateToAnotherScreen,
@@ -93,14 +93,14 @@ fun SignIn(
                 setEmail
             )
             DividerWithText()
-            Row(
-               modifier = Modifier.fillMaxWidth(0.5f)
-                   .padding(top = 40.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                GoogleLoginSignUp(currentScreen)
-                FacebookLoginSignUp(currentScreen)
-            }
+//            Row(
+//               modifier = Modifier.fillMaxWidth(0.5f)
+//                   .padding(top = 40.dp),
+//                horizontalArrangement = Arrangement.SpaceEvenly,
+//            ) {
+//                GoogleLoginSignUp(currentScreen)
+//                FacebookLoginSignUp(currentScreen)
+//            }
             LoginSignUpClickableText(currentScreen, navigateToAnotherScreen)
 
         }
@@ -234,7 +234,11 @@ fun TwachaButton(
 }
 
 @Composable
-fun ForgotPasswordTextField(navigateToAnotherScreen: (ScreenState, Boolean) -> Unit, email: String) {
+fun ForgotPasswordTextField(
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
+    email: String,
+    setEmail: (String) -> Unit
+) {
     val annotatedString = buildAnnotatedString {
         withStyle(
             style = SpanStyle(
@@ -256,8 +260,15 @@ fun ForgotPasswordTextField(navigateToAnotherScreen: (ScreenState, Boolean) -> U
                 .align(Alignment.End),
             text = annotatedString,
             onClick = { offset ->
-                sendOTPForgotPassword(email = )
-                navigateToAnotherScreen(ScreenState.UPDATEPASSWORDSCREEN, false)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val success = sendOTPForgotPassword(email = email)
+                    if (success) {
+                        setEmail(email)
+                        navigateToAnotherScreen(ScreenState.VERIFYCODESCREEN, true)
+                    }
+                    else
+                        println("Something went wrong")
+                }
             }
         )
     }

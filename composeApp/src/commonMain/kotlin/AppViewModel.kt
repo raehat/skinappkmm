@@ -7,6 +7,7 @@ class AppViewModel : ViewModel() {
     private val _screenStateFlow: MutableStateFlow<ScreenState> = MutableStateFlow(ScreenState.SPLASHSCREEN)
     private val screenStack : ArrayDeque<ScreenState> = ArrayDeque()
     private var email : String = ""
+    private var otp: String = ""
     val screenStateFlow: StateFlow<ScreenState> get() = _screenStateFlow.asStateFlow()
 
     private fun setAppState(screen: ScreenState) {
@@ -32,6 +33,14 @@ class AppViewModel : ViewModel() {
         return screenStateFlow.value
     }
 
+    fun lastScreen(): ScreenState? {
+        if (screenStack.isEmpty()) {
+            println("Screen Stack is Empty!")
+            return null
+        }
+        return screenStack.last()
+    }
+
     private fun addToScreenStack(screen: ScreenState) {
         screenStack.add(screen)
     }
@@ -42,5 +51,13 @@ class AppViewModel : ViewModel() {
 
     fun getEmail() : String {
         return email
+    }
+
+    fun getOTP(): String {
+        return otp
+    }
+
+    fun setOTP(otp: String) {
+        this.otp = otp
     }
 }

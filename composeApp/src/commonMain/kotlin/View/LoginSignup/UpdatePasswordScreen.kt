@@ -1,5 +1,7 @@
 package View.LoginSignup
 
+import Network.updateForgotPassword
+import ScreenState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -9,11 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.launch
 
 @Composable
 fun UpdatePassword(
-    navigateToLastScreen: () -> Unit
+    navigateToLastScreen: () -> Unit,
+    getOTP: () -> String,
+    getEmail: () -> String,
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
 ) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -32,6 +40,15 @@ fun UpdatePassword(
                 confirmPassword = it
             }
         }
-        TwachaButton("Create New Password") {}
+        TwachaButton("Create New Password") {
+            CoroutineScope(Dispatchers.IO).launch {
+                updateForgotPassword(
+                    email = getEmail(),
+                    password = password,
+                    otp = getOTP()
+                )
+                navigateToAnotherScreen(ScreenState.SIGNINSCREEN, false)
+            }
+        }
     }
 }

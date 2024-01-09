@@ -1,5 +1,6 @@
 package View.LoginSignup
 
+import Network.checkOTPForgotPassword
 import Network.verifyOTP
 import ScreenState
 import androidx.compose.foundation.border
@@ -32,18 +33,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import kotlin.reflect.KFunction2
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun VerifyCodeScreen(
     navigateToAnotherScreen: (ScreenState) -> Unit,
     navigateToLastScreen: () -> Unit,
-    getEmail: () -> String
+    getEmail: () -> String,
+    lastScreen: () -> ScreenState?,
+    setOTP: (String) -> Unit
 ) {
     Column {
         var pin by remember { mutableStateOf("") }
-        var error by remember { mutableStateOf("error") }
+        var error by remember { mutableStateOf("") }
 
         BackButton(navigateToLastScreen)
         Header("Verify Code", "Please enter the code we just sent to example@email.com.", 20.dp)
@@ -55,16 +57,36 @@ fun VerifyCodeScreen(
             text = error
         )
         TwachaButton("Verify") {
-            CoroutineScope(Dispatchers.IO).launch {
-                val success = verifyOTP(
-                    email = getEmail(),
-                    otp = pin
-                )
-                if (success) {
-                    navigateToAnotherScreen(ScreenState.HOMEPAGE)
-                } else {
-                    error = "Wrong OTP, try again"
+            when (lastScreen()) {
+                ScreenState.SIGNINSCREEN -> {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val success = checkOTPForgotPassword(
+                            email = getEmail(),
+                            otp = pin
+                        )
+                        if (success) {
+                            setOTP(pin)
+                            navigateToAnotherScreen(ScreenState.UPDATEPASSWORDSCREEN)
+                        } else {
+                            error = "Wrong OTP, try again"
+                        }
+                    }
                 }
+                ScreenState.SIGNUPSCREEN -> {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val success = verifyOTP(
+                            email = getEmail(),
+                            otp = pin
+                        )
+                        if (success) {
+                            navigateToAnotherScreen(ScreenState.HOMEPAGE)
+                        } else {
+                            error = "Wrong OTP, try again"
+                        }
+                    }
+                }
+                null -> TODO()
+                else -> {}
             }
         }
     }

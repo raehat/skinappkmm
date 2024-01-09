@@ -72,7 +72,9 @@ fun AppScreen(viewModel: AppViewModel) {
             VerifyCodeScreen(
                 viewModel::navigateToAnotherScreen,
                 viewModel::navigateToLastScreen,
-                viewModel::getEmail
+                viewModel::getEmail,
+                viewModel::lastScreen,
+                viewModel::setOTP
             )
         }
 
@@ -81,7 +83,12 @@ fun AppScreen(viewModel: AppViewModel) {
             enter = fadeIn() + slideInHorizontally(),
             exit = fadeOut() + slideOutHorizontally()
         ) {
-            UpdatePassword(viewModel::navigateToLastScreen)
+            UpdatePassword(
+                viewModel::navigateToLastScreen,
+                viewModel::getOTP,
+                viewModel::getEmail,
+                viewModel::navigateToAnotherScreen
+            )
         }
 
         AnimatedVisibility(
