@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class AppViewModel : ViewModel() {
-    private val _screenStateFlow: MutableStateFlow<ScreenState> = MutableStateFlow(ScreenState.SPLASHSCREEN)
+    private val _screenStateFlow: MutableStateFlow<ScreenState> = MutableStateFlow(ScreenState.HOMEPAGE)
     private val screenStack : ArrayDeque<ScreenState> = ArrayDeque()
     private var email : String = ""
     private var otp: String = ""
