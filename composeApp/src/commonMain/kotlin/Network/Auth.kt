@@ -1,7 +1,10 @@
 package Network
 
+import Data.Auth.URL
+import Data.VerifiedUser
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.util.InternalAPI
@@ -9,28 +12,25 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @OptIn(InternalAPI::class)
 fun signUp(email: String, password: String) = CoroutineScope(Dispatchers.IO).launch {
-    val url = "http://localhost:3000/signup"
-
-    val client = HttpClient()
 
     try {
-        val response = client.post(url) {
-            contentType(ContentType.Application.Json)
-            body = mapOf(
-                "email" to email,
-                "password" to password
+        val response = client().post(URL) {
+            body = Json.encodeToString(
+                VerifiedUser(
+                    email = email,
+                    password = password)
             )
+            contentType(ContentType.Application.Json)
         }
 
-        // Handle the response
-        println("bruhh: $response")
     } catch (e: Exception) {
-        // Handle the exception
         e.printStackTrace()
-    } finally {
-        client.close()
     }
 }
+
+fun client() = HttpClient()

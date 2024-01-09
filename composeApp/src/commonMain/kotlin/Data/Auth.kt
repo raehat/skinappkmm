@@ -1,4 +1,5 @@
 package Data
 
-class Auth {
+object Auth {
+    const val URL = "http://192.168.1.40:3000/signup"
 }

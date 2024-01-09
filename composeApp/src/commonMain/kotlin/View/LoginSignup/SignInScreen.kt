@@ -1,5 +1,6 @@
 package View.LoginSignup
 
+import Network.signUp
 import ScreenState
 import Theme.AppColor
 import androidx.compose.foundation.Image
@@ -131,7 +132,15 @@ fun SignInUpButton(
 ) {
     TwachaButton(
         buttonText =  if (currentScreen() == ScreenState.SIGNUPSCREEN) "Sign Up" else "Sign In"
-    ) { navigateToAnotherScreen(ScreenState.VERIFYCODESCREEN, true) }
+    ) {
+        SignInUp(currentScreen)
+    }
+}
+
+fun SignInUp(currentScreen: () -> ScreenState) {
+    if (currentScreen() == ScreenState.SIGNUPSCREEN)
+//        signUp()
+        ""
 }
 
 @Composable

@@ -1,4 +1,5 @@
 import Data.SharedPreferencesManager
+import Network.signUp
 import View.AppScreen
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -23,17 +24,9 @@ fun App() {
         }
     )
 
-    CoroutineScope(Dispatchers.IO).launch {
-        lol()
-    }
+    signUp("raehatsinghnanda@gmail.com", "password")
 
     MaterialTheme {
         AppScreen(viewModel)
     }
-}
-
-suspend fun lol() {
-    val client = HttpClient()
-    val response = client.get("https://ktor.io/docs/")
-    println("debug: ${response.bodyAsText()}")
 }

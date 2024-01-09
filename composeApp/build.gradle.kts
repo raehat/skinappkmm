@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     id("dev.icerock.mobile.multiplatform-resources")
+    kotlin("plugin.serialization") version "1.4.32"
 }
 
 kotlin {
@@ -59,6 +60,7 @@ kotlin {
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
             implementation(libs.ktor.client.core)
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -117,6 +119,7 @@ dependencies {
     commonMainApi("dev.icerock.moko:resources:0.23.0")
     commonMainApi("dev.icerock.moko:resources-compose:0.23.0") // for compose multiplatform
     commonTestImplementation("dev.icerock.moko:resources-test:0.23.0")
+    commonMainApi("io.ktor:ktor-serialization:2.3.7")
 }
 
 
