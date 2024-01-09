@@ -1,8 +1,16 @@
+@file:OptIn(InternalAPI::class)
+
 package Network
 
 import Data.Auth.URL
+import Data.Auth.client
+import Data.Auth.isSuccessfulResponse
+import Data.UpdateForgotPassword
 import Data.VerifiedUser
+import Data.VerifyOTP
+import Data.VerifyOTPForgotPassword
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
@@ -15,22 +23,113 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-@OptIn(InternalAPI::class)
-fun signUp(email: String, password: String) = CoroutineScope(Dispatchers.IO).launch {
-
+suspend fun signUp(email: String, password: String) : Boolean {
     try {
-        val response = client().post(URL) {
+        val response = client.post("$URL/signup") {
             body = Json.encodeToString(
                 VerifiedUser(
                     email = email,
-                    password = password)
+                    password = password
+                )
             )
             contentType(ContentType.Application.Json)
         }
+        return isSuccessfulResponse(response.status)
 
     } catch (e: Exception) {
         e.printStackTrace()
     }
+    return false
 }
 
-fun client() = HttpClient()
+suspend fun verifyOTP(email: String, otp: String) : Boolean {
+    try {
+        val response = client.post("$URL/verify_otp") {
+            body = Json.encodeToString(
+                VerifyOTP(email = email, otp = otp)
+            )
+            contentType(ContentType.Application.Json)
+        }
+        return isSuccessfulResponse(response.status)
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return false
+}
+
+suspend fun login(email: String, password: String) : Boolean {
+    try {
+        val response = client.post("$URL/login") {
+            body = Json.encodeToString(
+                VerifiedUser(
+                    email = email,
+                    password = password
+                )
+            )
+            contentType(ContentType.Application.Json)
+        }
+        return isSuccessfulResponse(response.status)
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return false
+}
+
+suspend fun sendOTPForgotPassword(email: String) : Boolean {
+    try {
+        val response = client.post("$URL/forgot_password") {
+            body = Json.encodeToString(
+                VerifyOTPForgotPassword(
+                    email = email
+                )
+            )
+            contentType(ContentType.Application.Json)
+        }
+        return isSuccessfulResponse(response.status)
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return false
+}
+
+suspend fun checkOTPForgotPassword(email: String, otp: String) : Boolean {
+    try {
+        val response = client.post("$URL/verify_otp_forgot_password") {
+            body = Json.encodeToString(
+                VerifyOTP(
+                    email = email,
+                    otp = otp
+                )
+            )
+            contentType(ContentType.Application.Json)
+        }
+        return isSuccessfulResponse(response.status)
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return false
+}
+
+suspend fun updateForgotPassword(email: String, password: String, otp: String) : Boolean {
+    try {
+        val response = client.post("$URL/update_password") {
+            body = Json.encodeToString(
+                UpdateForgotPassword(
+                    email = email,
+                    password = password,
+                    otp = otp
+                )
+            )
+            contentType(ContentType.Application.Json)
+        }
+        return isSuccessfulResponse(response.status)
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return false
+}

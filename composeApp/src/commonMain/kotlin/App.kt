@@ -24,8 +24,6 @@ fun App() {
         }
     )
 
-    signUp("raehatsinghnanda@gmail.com", "password")
-
     MaterialTheme {
         AppScreen(viewModel)
     }

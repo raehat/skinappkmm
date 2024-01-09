@@ -1,5 +1,7 @@
 package View.LoginSignup
 
+import Network.verifyOTP
+import ScreenState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +17,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,18 +26,47 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.launch
+import kotlin.reflect.KFunction2
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun VerifyCodeScreen(
-    navigateToLastScreen: () -> Unit
+    navigateToAnotherScreen: (ScreenState) -> Unit,
+    navigateToLastScreen: () -> Unit,
+    getEmail: () -> String
 ) {
     Column {
+        var pin by remember { mutableStateOf("") }
+        var error by remember { mutableStateOf("error") }
+
         BackButton(navigateToLastScreen)
         Header("Verify Code", "Please enter the code we just sent to example@email.com.", 20.dp)
-        PinView()
+        PinView() {
+            pin = it
+        }
         ResendOTPView()
-        TwachaButton("Verify") {}
+        Text(
+            text = error
+        )
+        TwachaButton("Verify") {
+            CoroutineScope(Dispatchers.IO).launch {
+                val success = verifyOTP(
+                    email = getEmail(),
+                    otp = pin
+                )
+                if (success) {
+                    navigateToAnotherScreen(ScreenState.HOMEPAGE)
+                } else {
+                    error = "Wrong OTP, try again"
+                }
+            }
+        }
     }
 }
 
@@ -59,7 +92,7 @@ fun ResendOTPView() {
 }
 
 @Composable
-fun PinView() {
+fun PinView(onPinValueChanged: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -67,12 +100,10 @@ fun PinView() {
         ,
         horizontalArrangement = Arrangement.Center
     ) {
-        OtpView(4, ::onPinValueChanged)
+        OtpView(4) {
+            onPinValueChanged(it)
+        }
     }
-}
-
-private fun onPinValueChanged(newValue: String) {
-    println("New PIN value: $newValue")
 }
 
 @Composable

@@ -1,5 +1,7 @@
 package View.LoginSignup
 
+import Network.login
+import Network.sendOTPForgotPassword
 import Network.signUp
 import ScreenState
 import Theme.AppColor
@@ -50,11 +52,17 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.twacha.MR
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignIn(
     currentScreen: () -> ScreenState,
-    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
+    getEmail: () -> String,
+    setEmail: (String) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -65,12 +73,25 @@ fun SignIn(
             .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            var email by remember { mutableStateOf("") }
+            var password by remember { mutableStateOf("") }
 
             HeaderSignInUp(currentScreen)
-            EmailTextField()
-            PasswordTextField()
-            ForgotPasswordTextField(navigateToAnotherScreen)
-            SignInUpButton(currentScreen, navigateToAnotherScreen)
+            EmailTextField() {
+                email = it
+            }
+            PasswordTextField() {
+                password = it
+            }
+            ForgotPasswordTextField(navigateToAnotherScreen, email)
+            SignInUpButton(
+                currentScreen,
+                navigateToAnotherScreen,
+                email,
+                password,
+                getEmail,
+                setEmail
+            )
             DividerWithText()
             Row(
                modifier = Modifier.fillMaxWidth(0.5f)
@@ -99,7 +120,7 @@ fun LoginSignUpClickableText(
                 fontSize = 14.sp
             )
         ) {
-            if (currentScreen() == ScreenState.SIGNUPSCREEN) append("Sign Up") else append("Sign In")
+            if (currentScreen() == ScreenState.SIGNUPSCREEN) append("Sign In") else append("Sign Up")
         }
     }
     Row (
@@ -107,7 +128,7 @@ fun LoginSignUpClickableText(
             .padding(top = 30.dp)
     ) {
         Text(
-            text = if (currentScreen() == ScreenState.SIGNUPSCREEN) "Don't have an account?" else "Already have an account?" ,
+            text = if (currentScreen() == ScreenState.SIGNUPSCREEN) "Already have an account?" else "Don't have an account?",
             fontSize = 14.sp,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
@@ -128,19 +149,60 @@ fun LoginSignUpClickableText(
 @Composable
 fun SignInUpButton(
     currentScreen: () -> ScreenState,
-    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
+    email: String,
+    password: String,
+    getEmail: () -> String,
+    setEmail: (String) -> Unit
 ) {
+    var error by remember { mutableStateOf("") }
     TwachaButton(
         buttonText =  if (currentScreen() == ScreenState.SIGNUPSCREEN) "Sign Up" else "Sign In"
     ) {
-        SignInUp(currentScreen)
+        signInUp(navigateToAnotherScreen, currentScreen, email, password, getEmail, setEmail) {
+            error = it
+        }
     }
+    Text(
+        modifier = Modifier
+            .padding(top = 20.dp, start = 40.dp, end = 40.dp),
+        text = error,
+        textAlign = TextAlign.Center
+    )
 }
 
-fun SignInUp(currentScreen: () -> ScreenState) {
-    if (currentScreen() == ScreenState.SIGNUPSCREEN)
-//        signUp()
-        ""
+fun signInUp(
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
+    currentScreen: () -> ScreenState,
+    email: String,
+    password: String,
+    getEmail: () -> String,
+    setEmail: (String) -> Unit,
+    onError: (String) -> Unit
+) {
+    if (currentScreen() == ScreenState.SIGNUPSCREEN) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val otpSendSuccess = signUp(email = email, password = password)
+            if (otpSendSuccess) {
+                setEmail(email)
+                navigateToAnotherScreen(ScreenState.VERIFYCODESCREEN, true)
+            } else {
+                println("Something went wrong")
+                onError("Email already exists, please choose a different email")
+            }
+        }
+    } else if (currentScreen() == ScreenState.SIGNINSCREEN) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val loginSuccess = login(email = email, password = password)
+            if (loginSuccess) {
+                setEmail(email)
+                navigateToAnotherScreen(ScreenState.HOMEPAGE, false)
+            } else {
+                println("Something went wrong")
+                onError("Incorrect email or password, please try again")
+            }
+        }
+    }
 }
 
 @Composable
@@ -172,7 +234,7 @@ fun TwachaButton(
 }
 
 @Composable
-fun ForgotPasswordTextField(navigateToAnotherScreen: (ScreenState, Boolean) -> Unit) {
+fun ForgotPasswordTextField(navigateToAnotherScreen: (ScreenState, Boolean) -> Unit, email: String) {
     val annotatedString = buildAnnotatedString {
         withStyle(
             style = SpanStyle(
@@ -194,6 +256,7 @@ fun ForgotPasswordTextField(navigateToAnotherScreen: (ScreenState, Boolean) -> U
                 .align(Alignment.End),
             text = annotatedString,
             onClick = { offset ->
+                sendOTPForgotPassword(email = )
                 navigateToAnotherScreen(ScreenState.UPDATEPASSWORDSCREEN, false)
             }
         )
@@ -238,7 +301,7 @@ fun Header(heading: String, subheading: String, paddingTop: Dp = 20.dp) {
 }
 
 @Composable
-fun EmailTextField() {
+fun EmailTextField(onEmailChanged: (String) -> Unit) {
     var email by remember { mutableStateOf("") }
 
     OutlinedTextField(
@@ -250,7 +313,10 @@ fun EmailTextField() {
             focusedLabelColor = Color.Black,
             unfocusedLabelColor = Color.Black
         ),
-        onValueChange = { email = it },
+        onValueChange = {
+            email = it
+            onEmailChanged(it)
+        },
         label = { Text("Email") },
         leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
         modifier = Modifier.fillMaxWidth()
@@ -264,7 +330,7 @@ fun EmailTextField() {
 }
 
 @Composable
-fun PasswordTextField(labelText : String = "Password") {
+fun PasswordTextField(labelText : String = "Password", onPasswordChanged: (String) -> Unit) {
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
@@ -277,7 +343,10 @@ fun PasswordTextField(labelText : String = "Password") {
             focusedLabelColor = Color.Black,
             unfocusedLabelColor = Color.Black
         ),
-        onValueChange = { password = it },
+        onValueChange = {
+            password = it
+            onPasswordChanged(it)
+        },
         label = { Text(labelText) },
         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
         visualTransformation = PasswordVisualTransformation(),

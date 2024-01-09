@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 class AppViewModel : ViewModel() {
     private val _screenStateFlow: MutableStateFlow<ScreenState> = MutableStateFlow(ScreenState.SPLASHSCREEN)
     private val screenStack : ArrayDeque<ScreenState> = ArrayDeque()
+    private var email : String = ""
     val screenStateFlow: StateFlow<ScreenState> get() = _screenStateFlow.asStateFlow()
 
     private fun setAppState(screen: ScreenState) {
@@ -33,5 +34,13 @@ class AppViewModel : ViewModel() {
 
     private fun addToScreenStack(screen: ScreenState) {
         screenStack.add(screen)
+    }
+
+    fun setEmail(email: String) {
+        this.email = email
+    }
+
+    fun getEmail() : String {
+        return email
     }
 }

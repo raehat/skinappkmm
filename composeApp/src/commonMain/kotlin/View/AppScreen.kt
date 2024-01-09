@@ -2,6 +2,7 @@ package View
 
 import ScreenState
 import AppViewModel
+import View.HomeScreen.HomePage
 import View.LoginSignup.SignIn
 import View.LoginSignup.SignUp
 import View.LoginSignup.UpdatePassword
@@ -42,7 +43,12 @@ fun AppScreen(viewModel: AppViewModel) {
             enter = fadeIn() + slideInHorizontally(),
             exit = fadeOut() + slideOutHorizontally()
         ) {
-            SignIn(viewModel::currentScreen, viewModel::navigateToAnotherScreen)
+            SignIn(
+                viewModel::currentScreen,
+                viewModel::navigateToAnotherScreen,
+                viewModel::getEmail,
+                viewModel::setEmail
+            )
         }
 
         AnimatedVisibility(
@@ -50,7 +56,12 @@ fun AppScreen(viewModel: AppViewModel) {
             enter = fadeIn() + slideInHorizontally(),
             exit = fadeOut() + slideOutHorizontally()
         ) {
-            SignUp(viewModel::currentScreen, viewModel::navigateToAnotherScreen)
+            SignUp(
+                viewModel::currentScreen,
+                viewModel::navigateToAnotherScreen,
+                viewModel::getEmail,
+                viewModel::setEmail
+            )
         }
 
         AnimatedVisibility(
@@ -58,7 +69,11 @@ fun AppScreen(viewModel: AppViewModel) {
             enter = fadeIn() + slideInHorizontally(),
             exit = fadeOut() + slideOutHorizontally()
         ) {
-            VerifyCodeScreen(viewModel::navigateToLastScreen)
+            VerifyCodeScreen(
+                viewModel::navigateToAnotherScreen,
+                viewModel::navigateToLastScreen,
+                viewModel::getEmail
+            )
         }
 
         AnimatedVisibility(
@@ -67,6 +82,14 @@ fun AppScreen(viewModel: AppViewModel) {
             exit = fadeOut() + slideOutHorizontally()
         ) {
             UpdatePassword(viewModel::navigateToLastScreen)
+        }
+
+        AnimatedVisibility(
+            visible = targetState == ScreenState.HOMEPAGE,
+            enter = fadeIn() + slideInHorizontally(),
+            exit = fadeOut() + slideOutHorizontally()
+        ) {
+            HomePage()
         }
     }
 }
