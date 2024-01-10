@@ -1,0 +1,4 @@
+package PhotoSelector
+
+class ImagePickerFactory {
+}
