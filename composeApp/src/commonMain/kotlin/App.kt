@@ -1,4 +1,3 @@
-import Data.SharedPreferencesManager
 import Network.signUp
 import View.AppScreen
 import androidx.compose.material.MaterialTheme
