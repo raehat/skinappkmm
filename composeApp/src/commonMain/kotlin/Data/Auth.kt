@@ -4,7 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.http.HttpStatusCode
 
 object Auth {
-    const val URL = "http://192.168.1.40:3000"
+    const val URL = "https://skinappkmmbackend.vercel.app"
 
     val client = HttpClient()
 
