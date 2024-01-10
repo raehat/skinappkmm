@@ -1,6 +1,7 @@
 package com.example.twacha
 
 import App
+import PhotoSelector.ImagePickerFactory
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
@@ -15,7 +16,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            App()
+            App(ImagePickerFactory().createPicker())
         }
     }
 }
@@ -23,5 +24,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App()
+    App(ImagePickerFactory().createPicker())
 }

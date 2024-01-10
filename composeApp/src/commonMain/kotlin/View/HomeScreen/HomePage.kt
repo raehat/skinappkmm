@@ -1,10 +1,10 @@
 package View.HomeScreen
 
+import PhotoSelector.ImagePicker
 import Theme.AppColor
 import Theme.AppColor.LIGHT_GRAY
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,7 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 
 @Composable
-fun HomePage() {
+fun HomePage(imagePicker: ImagePicker) {
     var currentHomePageScreen by remember { mutableStateOf(Screen.USERSCREEN) }
 
     Column(
@@ -42,7 +42,11 @@ fun HomePage() {
             .fillMaxWidth()
             .background(LIGHT_GRAY)
     ) {
-        Screen(modifier = Modifier.weight(8.7f), currentHomePageScreen)
+        Screen(
+            modifier = Modifier.weight(8.7f),
+            currentHomePageScreen,
+            imagePicker
+        )
         BottomNavigationDrawer(modifier = Modifier.weight(1.3f)) {
             currentHomePageScreen = it
         }
@@ -50,14 +54,18 @@ fun HomePage() {
 }
 
 @Composable
-fun Screen(modifier: Modifier, currentHomePageScreen: Screen) {
+fun Screen(
+    modifier: Modifier,
+    currentHomePageScreen: Screen,
+    imagePicker: ImagePicker
+) {
 
     when(currentHomePageScreen) {
         Screen.USERSCREEN -> {
             UserScreen(modifier)
         }
         Screen.SCANIMAGESCREEN -> {
-            ScanImageScreen(modifier)
+            ScanImageScreen(modifier, imagePicker)
         }
         Screen.SETTINGSSCREEN -> {
             SettingsScreen(modifier)

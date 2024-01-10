@@ -1,8 +1,16 @@
 package PhotoSelector
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import platform.UIKit.UIViewController
 
-actual class ImagePickerFactory {
+actual class ImagePickerFactory(
+    private val rootController: UIViewController
+){
+
     @Composable
-    actual fun createPicker(): PhotoSelector.ImagePicker {
-        TODO("Not yet implemented")
+    actual fun createPicker(): ImagePicker {
+        return remember {
+            ImagePicker(rootController)
+        }
     }
 }

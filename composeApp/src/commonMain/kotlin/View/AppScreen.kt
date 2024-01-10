@@ -2,6 +2,7 @@ package View
 
 import ScreenState
 import AppViewModel
+import PhotoSelector.ImagePicker
 import View.HomeScreen.HomePage
 import View.LoginSignup.SignIn
 import View.LoginSignup.SignUp
@@ -18,7 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 
 @Composable
-fun AppScreen(viewModel: AppViewModel) {
+fun AppScreen(viewModel: AppViewModel, imagePicker: ImagePicker) {
     val appState by viewModel.screenStateFlow.collectAsState()
 
     Crossfade(targetState = appState) { targetState ->
@@ -101,7 +102,7 @@ fun AppScreen(viewModel: AppViewModel) {
             enter = fadeIn() + slideInHorizontally(),
             exit = fadeOut() + slideOutHorizontally()
         ) {
-            HomePage()
+            HomePage(imagePicker)
         }
     }
 }

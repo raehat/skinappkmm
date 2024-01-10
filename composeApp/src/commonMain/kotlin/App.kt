@@ -1,3 +1,4 @@
+import PhotoSelector.ImagePicker
 import SharedPreferenceManager.SharedPreferenceManagerFactory
 import View.AppScreen
 import androidx.compose.material.MaterialTheme
@@ -6,7 +7,9 @@ import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
 
 @Composable
-fun App() {
+fun App(
+    imagePicker: ImagePicker
+) {
     val sharedPreferencesManager = SharedPreferenceManagerFactory().createSharedPreferenceManager()
     val viewModel = getViewModel(
         key = "app",
@@ -16,6 +19,6 @@ fun App() {
     )
 
     MaterialTheme {
-        AppScreen(viewModel)
+        AppScreen(viewModel, imagePicker)
     }
 }
