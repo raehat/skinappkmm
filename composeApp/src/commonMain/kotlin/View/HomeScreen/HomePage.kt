@@ -1,5 +1,6 @@
 package View.HomeScreen
 
+import Theme.AppColor
 import Theme.AppColor.LIGHT_GRAY
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -64,36 +66,6 @@ fun Screen(modifier: Modifier, currentHomePageScreen: Screen) {
 }
 
 @Composable
-fun SettingsScreen(modifier: Modifier) {
-    Box(
-        modifier = modifier
-            .background(LIGHT_GRAY)
-    ) {
-        Text("SettingsScreen")
-    }
-}
-
-@Composable
-fun ScanImageScreen(modifier: Modifier) {
-    Box(
-        modifier = modifier
-            .background(LIGHT_GRAY)
-    ) {
-        Text("ScanImageScreen")
-    }
-}
-
-@Composable
-fun UserScreen(modifier: Modifier) {
-    Box(
-        modifier = modifier
-            .background(LIGHT_GRAY)
-    ) {
-        Text("UserScreen")
-    }
-}
-
-@Composable
 fun BottomNavigationDrawer(modifier: Modifier, setCurrentHomePageScreen: (Screen) -> Unit) {
     Card(
         modifier = modifier
@@ -138,13 +110,28 @@ fun IconButtonWithText(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        IconButton(
-            onClick = {
-                      setCurrentHomePageScreen(screen)
-            },
-            modifier = Modifier.padding(vertical = 3.dp)
-        ) {
-            Icon(imageVector = icon, contentDescription = null)
+        when(screen) {
+            Screen.SCANIMAGESCREEN -> {
+                FloatingActionButton(
+                    onClick = {
+                        setCurrentHomePageScreen(screen)
+                    },
+                    modifier = Modifier.padding(vertical = 3.dp),
+                    backgroundColor = AppColor.PURPLE
+                ) {
+                    Icon(imageVector = icon, contentDescription = null, tint = Color.White)
+                }
+            }
+            else -> {
+                IconButton(
+                    onClick = {
+                        setCurrentHomePageScreen(screen)
+                    },
+                    modifier = Modifier.padding(vertical = 3.dp)
+                ) {
+                    Icon(imageVector = icon, contentDescription = null)
+                }
+            }
         }
         Text(text = text)
     }

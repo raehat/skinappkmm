@@ -61,6 +61,7 @@ kotlin {
             implementation(compose.components.resources)
             implementation(libs.ktor.client.core)
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+            implementation("media.kamel:kamel-image:0.9.1")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
