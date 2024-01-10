@@ -1,9 +1,10 @@
+import SharedPreferenceManager.SharedPreferencesManager
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class AppViewModel : ViewModel() {
+class AppViewModel(private val sharedPreferencesManager: SharedPreferencesManager) : ViewModel() {
     private val _screenStateFlow: MutableStateFlow<ScreenState> = MutableStateFlow(ScreenState.HOMEPAGE)
     private val screenStack : ArrayDeque<ScreenState> = ArrayDeque()
     private var email : String = ""
@@ -59,5 +60,13 @@ class AppViewModel : ViewModel() {
 
     fun setOTP(otp: String) {
         this.otp = otp
+    }
+
+    fun saveStringToDevice(key: String, value: String) {
+        sharedPreferencesManager.putString(key, value)
+    }
+
+    fun getStringFromDevice(key: String): String? {
+        return sharedPreferencesManager.getString(key)
     }
 }
