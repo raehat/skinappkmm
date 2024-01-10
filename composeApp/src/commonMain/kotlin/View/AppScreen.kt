@@ -27,7 +27,10 @@ fun AppScreen(viewModel: AppViewModel) {
             enter = fadeIn() + slideInHorizontally(),
             exit = fadeOut() + slideOutHorizontally()
         ) {
-            SplashScreen(viewModel::navigateToAnotherScreen)
+            SplashScreen(
+                viewModel::navigateToAnotherScreen,
+                viewModel::isUserLoggedIn
+            )
         }
 
         AnimatedVisibility(
@@ -47,7 +50,8 @@ fun AppScreen(viewModel: AppViewModel) {
                 viewModel::currentScreen,
                 viewModel::navigateToAnotherScreen,
                 viewModel::getEmail,
-                viewModel::setEmail
+                viewModel::setEmail,
+                viewModel::saveLoginEmail
             )
         }
 
@@ -60,7 +64,8 @@ fun AppScreen(viewModel: AppViewModel) {
                 viewModel::currentScreen,
                 viewModel::navigateToAnotherScreen,
                 viewModel::getEmail,
-                viewModel::setEmail
+                viewModel::setEmail,
+                viewModel::saveLoginEmail
             )
         }
 

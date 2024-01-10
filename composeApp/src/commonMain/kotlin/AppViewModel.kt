@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class AppViewModel(private val sharedPreferencesManager: SharedPreferencesManager) : ViewModel() {
-    private val _screenStateFlow: MutableStateFlow<ScreenState> = MutableStateFlow(ScreenState.HOMEPAGE)
+    private val _screenStateFlow: MutableStateFlow<ScreenState> = MutableStateFlow(ScreenState.SPLASHSCREEN)
     private val screenStack : ArrayDeque<ScreenState> = ArrayDeque()
     private var email : String = ""
     private var otp: String = ""
@@ -68,5 +68,17 @@ class AppViewModel(private val sharedPreferencesManager: SharedPreferencesManage
 
     fun getStringFromDevice(key: String): String? {
         return sharedPreferencesManager.getString(key)
+    }
+
+    fun saveLoginEmail(email: String) {
+        saveStringToDevice("email", email)
+    }
+
+    fun getLoginEmail(): String? {
+        return getStringFromDevice("email")
+    }
+
+    fun isUserLoggedIn(): Boolean {
+        return !(getLoginEmail() == null || getLoginEmail() == "")
     }
 }

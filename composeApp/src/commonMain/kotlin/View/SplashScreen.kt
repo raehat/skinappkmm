@@ -16,7 +16,10 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navigateToAnotherScreen: (ScreenState) -> Unit) {
+fun SplashScreen(
+    navigateToAnotherScreen: (ScreenState) -> Unit,
+    isUserLoggedIn: () -> Boolean
+) {
     Box(
         modifier = Modifier.fillMaxSize().background(AppColor.PURPLE)
     ) {
@@ -30,7 +33,10 @@ fun SplashScreen(navigateToAnotherScreen: (ScreenState) -> Unit) {
 
         LaunchedEffect(Unit) {
             delay(1000L) // 1000 milliseconds = 1 second
-            navigateToAnotherScreen(ScreenState.HOMESCREEN)
+            if (isUserLoggedIn())
+                navigateToAnotherScreen(ScreenState.HOMEPAGE)
+            else
+                navigateToAnotherScreen(ScreenState.HOMESCREEN)
         }
     }
 }

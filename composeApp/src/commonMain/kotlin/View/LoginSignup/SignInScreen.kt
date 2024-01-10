@@ -8,7 +8,6 @@ import Theme.AppColor
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -62,7 +61,8 @@ fun SignIn(
     currentScreen: () -> ScreenState,
     navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
     getEmail: () -> String,
-    setEmail: (String) -> Unit
+    setEmail: (String) -> Unit,
+    saveLoginEmail: (String) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -90,7 +90,8 @@ fun SignIn(
                 email,
                 password,
                 getEmail,
-                setEmail
+                setEmail,
+                saveLoginEmail
             )
             DividerWithText()
 //            Row(
@@ -153,13 +154,22 @@ fun SignInUpButton(
     email: String,
     password: String,
     getEmail: () -> String,
-    setEmail: (String) -> Unit
+    setEmail: (String) -> Unit,
+    saveLoginEmail: (String) -> Unit
 ) {
     var error by remember { mutableStateOf("") }
     TwachaButton(
         buttonText =  if (currentScreen() == ScreenState.SIGNUPSCREEN) "Sign Up" else "Sign In"
     ) {
-        signInUp(navigateToAnotherScreen, currentScreen, email, password, getEmail, setEmail) {
+        signInUp(
+            navigateToAnotherScreen,
+            currentScreen,
+            email,
+            password,
+            getEmail,
+            setEmail,
+            saveLoginEmail
+        ) {
             error = it
         }
     }
@@ -178,6 +188,7 @@ fun signInUp(
     password: String,
     getEmail: () -> String,
     setEmail: (String) -> Unit,
+    saveLoginEmail: (String) -> Unit,
     onError: (String) -> Unit
 ) {
     if (currentScreen() == ScreenState.SIGNUPSCREEN) {
@@ -196,6 +207,7 @@ fun signInUp(
             val loginSuccess = login(email = email, password = password)
             if (loginSuccess) {
                 setEmail(email)
+                saveLoginEmail(email)
                 navigateToAnotherScreen(ScreenState.HOMEPAGE, false)
             } else {
                 println("Something went wrong")
