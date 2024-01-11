@@ -219,8 +219,9 @@ fun signInUp(
 
 @Composable
 fun TwachaButton(
+    modifier: Modifier = Modifier.padding(20.dp, 40.dp, 20.dp, 0.dp),
     buttonText: String,
-    buttonOnClick: () -> Unit
+    buttonOnClick: () -> Unit,
 ) {
     Column () {
         Button(
@@ -228,10 +229,9 @@ fun TwachaButton(
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = AppColor.PURPLE
             ),
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)
-                .padding(20.dp, 40.dp, 20.dp, 0.dp),
+                .align(Alignment.CenterHorizontally),
             shape = RoundedCornerShape(16.dp)
         ) {
             Text(

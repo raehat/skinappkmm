@@ -56,7 +56,7 @@ fun VerifyCodeScreen(
         Text(
             text = error
         )
-        TwachaButton("Verify") {
+        TwachaButton(buttonText = "Verify") {
             when (lastScreen()) {
                 ScreenState.SIGNINSCREEN -> {
                     CoroutineScope(Dispatchers.IO).launch {

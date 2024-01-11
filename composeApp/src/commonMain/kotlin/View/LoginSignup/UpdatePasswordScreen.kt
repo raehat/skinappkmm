@@ -40,7 +40,7 @@ fun UpdatePassword(
                 confirmPassword = it
             }
         }
-        TwachaButton("Create New Password") {
+        TwachaButton(buttonText = "Create New Password") {
             CoroutineScope(Dispatchers.IO).launch {
                 updateForgotPassword(
                     email = getEmail(),
