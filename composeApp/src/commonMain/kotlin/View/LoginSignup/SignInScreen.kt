@@ -219,6 +219,7 @@ fun signInUp(
 
 @Composable
 fun TwachaButton(
+    backgroundColor : Color = AppColor.PURPLE,
     modifier: Modifier = Modifier.padding(20.dp, 40.dp, 20.dp, 0.dp),
     buttonText: String,
     buttonOnClick: () -> Unit,
@@ -227,7 +228,7 @@ fun TwachaButton(
         Button(
             onClick = buttonOnClick,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = AppColor.PURPLE
+                backgroundColor = backgroundColor
             ),
             modifier = modifier
                 .fillMaxWidth()

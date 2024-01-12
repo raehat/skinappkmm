@@ -140,7 +140,6 @@ fun BackButton(navigateToLastScreen: () -> Unit) {
                 shape = CircleShape
             )
             .clickable {
-                println("nigr")
                 navigateToLastScreen()
             }
     ) {

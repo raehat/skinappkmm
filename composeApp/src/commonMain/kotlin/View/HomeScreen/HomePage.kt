@@ -1,6 +1,8 @@
 package View.HomeScreen
 
+import Data.AnalysisResult
 import PhotoSelector.ImagePicker
+import ScreenState
 import Theme.AppColor
 import Theme.AppColor.LIGHT_GRAY
 import androidx.compose.foundation.background
@@ -33,7 +35,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 
 @Composable
-fun HomePage(imagePicker: ImagePicker) {
+fun HomePage(
+    imagePicker: ImagePicker,
+    setImagePickedForAnalysis: (ByteArray) -> Unit,
+    setAnalysisResult: (AnalysisResult) -> Unit,
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+) {
     var currentHomePageScreen by remember { mutableStateOf(Screen.USERSCREEN) }
 
     Column(
@@ -45,7 +52,10 @@ fun HomePage(imagePicker: ImagePicker) {
         Screen(
             modifier = Modifier.weight(8.7f),
             currentHomePageScreen,
-            imagePicker
+            imagePicker,
+            setImagePickedForAnalysis,
+            setAnalysisResult,
+            navigateToAnotherScreen
         )
         BottomNavigationDrawer(modifier = Modifier.weight(1.3f)) {
             currentHomePageScreen = it
@@ -57,7 +67,10 @@ fun HomePage(imagePicker: ImagePicker) {
 fun Screen(
     modifier: Modifier,
     currentHomePageScreen: Screen,
-    imagePicker: ImagePicker
+    imagePicker: ImagePicker,
+    setImagePickedForAnalysis: (ByteArray) -> Unit,
+    setAnalysisResult: (AnalysisResult) -> Unit,
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
 ) {
 
     when(currentHomePageScreen) {
@@ -65,7 +78,13 @@ fun Screen(
             UserScreen(modifier)
         }
         Screen.SCANIMAGESCREEN -> {
-            ScanImageScreen(modifier, imagePicker)
+            ScanImageScreen(
+                modifier,
+                imagePicker,
+                setImagePickedForAnalysis,
+                setAnalysisResult,
+                navigateToAnotherScreen
+            )
         }
         Screen.SETTINGSSCREEN -> {
             SettingsScreen(modifier)

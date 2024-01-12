@@ -3,6 +3,7 @@ package View
 import ScreenState
 import AppViewModel
 import PhotoSelector.ImagePicker
+import View.HomeScreen.AnalysisScreen
 import View.HomeScreen.HomePage
 import View.LoginSignup.SignIn
 import View.LoginSignup.SignUp
@@ -102,7 +103,24 @@ fun AppScreen(viewModel: AppViewModel, imagePicker: ImagePicker) {
             enter = fadeIn() + slideInHorizontally(),
             exit = fadeOut() + slideOutHorizontally()
         ) {
-            HomePage(imagePicker)
+            HomePage(
+                imagePicker,
+                viewModel::setImagePickedForAnalysis,
+                viewModel::setAnalysisResult,
+                viewModel::navigateToAnotherScreen
+            )
+        }
+
+        AnimatedVisibility(
+            visible = targetState == ScreenState.ANALYSISRESULTSCREEN,
+            enter = fadeIn() + slideInHorizontally(),
+            exit = fadeOut() + slideOutHorizontally()
+        ) {
+            AnalysisScreen(
+                viewModel::getImagePickedForAnalysis,
+                viewModel::getAnalysisResult,
+                viewModel::navigateToLastScreen
+            )
         }
     }
 }

@@ -1,3 +1,4 @@
+import Data.AnalysisResult
 import SharedPreferenceManager.SharedPreferencesManager
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -5,10 +6,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class AppViewModel(private val sharedPreferencesManager: SharedPreferencesManager) : ViewModel() {
-    private val _screenStateFlow: MutableStateFlow<ScreenState> = MutableStateFlow(ScreenState.SPLASHSCREEN)
+    private val _screenStateFlow: MutableStateFlow<ScreenState> = MutableStateFlow(ScreenState.ANALYSISRESULTSCREEN)
     private val screenStack : ArrayDeque<ScreenState> = ArrayDeque()
     private var email : String = ""
     private var otp: String = ""
+    private var imagePickedForAnalysis : ByteArray = byteArrayOf()
+    private var analysisResult : AnalysisResult = AnalysisResult()
     val screenStateFlow: StateFlow<ScreenState> get() = _screenStateFlow.asStateFlow()
 
     private fun setAppState(screen: ScreenState) {
@@ -80,5 +83,21 @@ class AppViewModel(private val sharedPreferencesManager: SharedPreferencesManage
 
     fun isUserLoggedIn(): Boolean {
         return !(getLoginEmail() == null || getLoginEmail() == "")
+    }
+
+    fun setImagePickedForAnalysis(image: ByteArray) {
+        imagePickedForAnalysis = image
+    }
+
+    fun getImagePickedForAnalysis() : ByteArray {
+        return imagePickedForAnalysis
+    }
+
+    fun setAnalysisResult(analysisResult: AnalysisResult) {
+        this.analysisResult = analysisResult
+    }
+
+    fun getAnalysisResult() : AnalysisResult {
+        return analysisResult
     }
 }

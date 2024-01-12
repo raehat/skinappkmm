@@ -9,15 +9,10 @@ import Data.UpdateForgotPassword
 import Data.VerifiedUser
 import Data.VerifyOTP
 import Data.VerifyOTPForgotPassword
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.post
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.util.InternalAPI
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString

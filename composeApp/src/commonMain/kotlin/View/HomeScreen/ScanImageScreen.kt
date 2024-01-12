@@ -1,7 +1,11 @@
 package View.HomeScreen
 
+import Data.AnalysisResult
+import Data.Auth
+import Network.analyzeImage
 import PhotoSelector.ImagePicker
 import PhotoSelector.rememberBitmapFromBytes
+import ScreenState
 import Theme.AppColor
 import View.LoginSignup.TwachaButton
 import androidx.compose.foundation.Image
@@ -33,9 +37,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import io.ktor.client.statement.bodyAsText
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 
 @Composable
-fun ScanImageScreen(modifier: Modifier, imagePicker: ImagePicker) {
+fun ScanImageScreen(
+    modifier: Modifier,
+    imagePicker: ImagePicker,
+    setImagePickedForAnalysis: (ByteArray) -> Unit,
+    setAnalysisResult: (AnalysisResult) -> Unit,
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+) {
     Box(
         modifier = modifier
             .background(AppColor.LIGHT_GRAY)
@@ -49,29 +65,85 @@ fun ScanImageScreen(modifier: Modifier, imagePicker: ImagePicker) {
         ) {
             UploadInstruction()
             PickImageCard(imagePicker, imagePicked)
-            AnalyzeImage(imagePicked)
-            ChangeImage(imagePicker)
+            AnalyzeImageButton(
+                imagePicked,
+                setImagePickedForAnalysis,
+                setAnalysisResult,
+                navigateToAnotherScreen
+            )
+            ChangeImageButton(imagePicker)
             AboutProcess()
         }
     }
 }
 
 @Composable
-fun ChangeImage(
+fun ChangeImageButton(
     imagePicker: ImagePicker
 ) {
     TwachaButton(
         modifier = Modifier.padding(20.dp, 20.dp, 20.dp, 0.dp),
-        "Change Image"
+        buttonText = "Change Image"
     ) { imagePicker.pickImage() }
 }
 
 @Composable
-fun AnalyzeImage(imagePicked: ByteArray) {
+fun AnalyzeImageButton(
+    imagePicked: ByteArray,
+    setImagePickedForAnalysis: (ByteArray) -> Unit,
+    setAnalysisResult: (AnalysisResult) -> Unit,
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+) {
+    var buttonText by remember { mutableStateOf("Analyze Image") }
+    var buttonBackgroundColor by remember { mutableStateOf(AppColor.PURPLE) }
+
     TwachaButton(
         modifier = Modifier.padding(20.dp, 20.dp, 20.dp, 0.dp),
-        "Analyze Image"
-    ) {  }
+        buttonText = buttonText,
+        backgroundColor = buttonBackgroundColor,
+        buttonOnClick = {
+            onAnalyzeImageButtonClick(
+                imagePicked = imagePicked,
+                buttonText = { buttonTextChanged ->
+                    buttonText = buttonTextChanged
+                },
+                buttonBackgroundColor = { colorChanged ->
+                    buttonBackgroundColor = colorChanged
+                },
+                setImagePickedForAnalysis = setImagePickedForAnalysis,
+                setAnalysisResult = setAnalysisResult,
+                navigateToAnotherScreen = navigateToAnotherScreen
+            )
+        }
+    )
+}
+
+fun onAnalyzeImageButtonClick(
+    imagePicked: ByteArray,
+    buttonText: (String) -> Unit,
+    buttonBackgroundColor: (Color) -> Unit,
+    setImagePickedForAnalysis: (ByteArray) -> Unit,
+    setAnalysisResult: (AnalysisResult) -> Unit,
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+) {
+    if (!imagePicked.contentEquals(byteArrayOf())) {
+        buttonText("Analyzing Image, may take a moment")
+        buttonBackgroundColor(Color.Gray)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = analyzeImage(imagePicked)
+            if (response != null && Auth.isSuccessfulResponse(response.status)) {
+                buttonText("Analyze Image")
+                buttonBackgroundColor(AppColor.PURPLE)
+                val result = Json.decodeFromString<AnalysisResult>(response.bodyAsText())
+
+                setImagePickedForAnalysis(imagePicked)
+                setAnalysisResult(result)
+
+                navigateToAnotherScreen(ScreenState.ANALYSISRESULTSCREEN, true)
+            }
+        }
+    }
 }
 
 @Composable
@@ -136,10 +208,16 @@ fun PickImageCard(imagePicker: ImagePicker, imagePicked: ByteArray) {
 
 @Composable
 fun UploadInstruction() {
-    Text(
-        text = "Click on the icon below to upload image of skin area to be diagnosed",
+    Card(
         modifier = Modifier
-            .padding(horizontal = 20.dp, vertical = 20.dp),
-        textAlign = TextAlign.Center
-    )
+        .clip(shape = RoundedCornerShape(0.dp, 0.dp, 30.dp, 30.dp))
+        .padding(bottom = 20.dp)
+    ) {
+        Text(
+            text = "Click on the icon below to upload image of skin area to be diagnosed",
+            modifier = Modifier
+                .padding(horizontal = 20.dp, vertical = 20.dp),
+            textAlign = TextAlign.Center
+        )
+    }
 }
