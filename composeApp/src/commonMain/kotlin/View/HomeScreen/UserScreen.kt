@@ -1,6 +1,11 @@
 package View.HomeScreen
 
+import Data.Scan
+import Data.Scans
+import Network.getAllScans
+import PhotoSelector.rememberBitmapFromBytes
 import Theme.AppColor
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -8,7 +13,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -17,21 +24,28 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Composable
-fun UserScreen(modifier: Modifier) {
+fun UserScreen(getEmail: () -> String?) {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .background(AppColor.LIGHT_GRAY)
     ) {
         Column(
@@ -42,14 +56,26 @@ fun UserScreen(modifier: Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AboutApp()
-            LastScans()
-            ScanHistory()
+            LastScans(getEmail)
+            ScanHistory(getEmail)
         }
     }
 }
 
 @Composable
-fun ScanHistory() {
+fun ScanHistory(getEmail: () -> String?) {
+    var scans by remember { mutableStateOf(Scans()) }
+    var a by remember { mutableStateOf(0) }
+    var b by remember { mutableStateOf(0) }
+
+    CoroutineScope(Dispatchers.IO).launch {
+        val getScans = getAllScans(getEmail().toString())
+        if (getScans != null) {
+            scans = getScans
+            a = scans.scans.size
+        }
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -71,16 +97,16 @@ fun ScanHistory() {
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 ChartMaker(
-                    a = 5,
-                    b = 13
+                    a = a,
+                    b = b
                 )
                 Column(
                     modifier = Modifier
                         .padding(vertical = 10.dp)
                 ) {
-                    ScanHistoryText("Total photos uploaded", "18")
-                    ScanHistoryText("without diagnosed problems", "13")
-                    ScanHistoryText("with diagnosed problems", "5")
+                    ScanHistoryText("Total photos uploaded", "${(a+b)}")
+                    ScanHistoryText("without diagnosed problems", "$b")
+                    ScanHistoryText("with diagnosed problems", "$a")
                 }
             }
         }
@@ -99,7 +125,8 @@ fun ScanHistoryText(text: String, number: String) {
 }
 
 @Composable
-fun LastScans() {
+fun LastScans(getEmail: () -> String?) {
+    var scans by remember { mutableStateOf(Scans()) }
     Column(
         modifier = Modifier
             .padding(horizontal = 10.dp)
@@ -113,29 +140,45 @@ fun LastScans() {
             modifier = Modifier
                 .horizontalScroll(rememberScrollState())
         ) {
-
-            ScanItem()
-            ScanItem()
-            ScanItem()
+            CoroutineScope(Dispatchers.IO).launch {
+                val getScans = getAllScans(getEmail().toString())
+                if (getScans != null) {
+                    scans = getScans
+                }
+            }
+            if (scans.scans.isEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .padding(vertical = 100.dp),
+                    text = "No scans available"
+                )
+            }
+            scans.scans.forEach {scan ->
+                ScanItem(scan)
+            }
         }
     }
 }
 
+@OptIn(ExperimentalEncodingApi::class)
 @Composable
-fun ScanItem() {
+fun ScanItem(scan: Scan) {
     Card(
         modifier = Modifier
             .padding(horizontal = 5.dp)
     ) {
         Column {
-            KamelImage(
-                modifier = Modifier
-                    .size(130.dp)
-                    .padding(12.dp),
-                resource = asyncPainterResource(data = "https://www.health.com/thmb/URmij5hdhBwrcESJFg9ySAlJLew=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/VesiclesGettyImages-1176815581-8d5b59c3e24543cdb32bdd1d7b054482.jpg"),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
+            val imageBitmap = rememberBitmapFromBytes(Base64.decode(scan.imageBase64))
+            if (imageBitmap != null) {
+                Image(
+                    modifier = Modifier
+                        .size(130.dp)
+                        .padding(12.dp),
+                    bitmap = imageBitmap,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
+            }
             Text(
                 text = "Scanned on",
                 fontSize = 12.sp,
@@ -144,7 +187,7 @@ fun ScanItem() {
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "08/01/24",
+                text = scan.date,
                 fontSize = 12.sp,
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
@@ -158,7 +201,7 @@ fun ScanItem() {
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Probiotic lacmisus",
+                text = scan.analysisResult,
                 fontSize = 12.sp,
                 modifier = Modifier
                     .padding(horizontal = 12.dp)

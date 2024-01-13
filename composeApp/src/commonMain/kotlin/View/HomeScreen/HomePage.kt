@@ -78,7 +78,9 @@ fun Screen(
 
     when(currentHomePageScreen) {
         Screen.USERSCREEN -> {
-            UserScreen(modifier)
+            UserScreen(
+                getEmail
+            )
         }
         Screen.SCANIMAGESCREEN -> {
             ScanImageScreen(

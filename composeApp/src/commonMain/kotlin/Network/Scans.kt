@@ -1,12 +1,17 @@
 package Network
 
 import Data.Network
+import Data.Scans
+import io.ktor.client.call.body
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
+import io.ktor.client.request.get
 import io.ktor.client.request.post
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.util.InternalAPI
+import kotlinx.serialization.json.Json
 
 @OptIn(InternalAPI::class)
 suspend fun addNewScan(
@@ -40,4 +45,16 @@ suspend fun addNewScan(
         e.printStackTrace()
     }
     return false
+}
+
+suspend fun getAllScans(email: String) : Scans? {
+    try {
+
+        val response = Network.client.get("${Network.URL}/get_all_scans?email=$email")
+        return Json.decodeFromString<Scans>(response.bodyAsText())
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return null
 }
