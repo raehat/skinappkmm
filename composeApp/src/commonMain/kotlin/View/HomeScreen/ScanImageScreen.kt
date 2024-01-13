@@ -57,6 +57,7 @@ fun ScanImageScreen(
             .background(AppColor.LIGHT_GRAY)
     ) {
         var imagePicked by remember { mutableStateOf(byteArrayOf()) }
+        var error by remember { mutableStateOf("") }
         imagePicker.registerPicker {
             imagePicked = it
         }
@@ -70,11 +71,21 @@ fun ScanImageScreen(
                 setImagePickedForAnalysis,
                 setAnalysisResult,
                 navigateToAnotherScreen
-            )
+            ) {
+                error = it
+            }
             ChangeImageButton(imagePicker)
+            ErrorText(error)
             AboutProcess()
         }
     }
+}
+
+@Composable
+fun ErrorText(error: String) {
+    Text(
+        text = error
+    )
 }
 
 @Composable
@@ -92,7 +103,8 @@ fun AnalyzeImageButton(
     imagePicked: ByteArray,
     setImagePickedForAnalysis: (ByteArray) -> Unit,
     setAnalysisResult: (AnalysisResult) -> Unit,
-    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
+    error: (String) -> Unit
 ) {
     var buttonText by remember { mutableStateOf("Analyze Image") }
     var buttonBackgroundColor by remember { mutableStateOf(AppColor.PURPLE) }
@@ -113,7 +125,9 @@ fun AnalyzeImageButton(
                 setImagePickedForAnalysis = setImagePickedForAnalysis,
                 setAnalysisResult = setAnalysisResult,
                 navigateToAnotherScreen = navigateToAnotherScreen
-            )
+            ) {
+                error(it)
+            }
         }
     )
 }
@@ -124,7 +138,8 @@ fun onAnalyzeImageButtonClick(
     buttonBackgroundColor: (Color) -> Unit,
     setImagePickedForAnalysis: (ByteArray) -> Unit,
     setAnalysisResult: (AnalysisResult) -> Unit,
-    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
+    error: (String) -> Unit
 ) {
     if (!imagePicked.contentEquals(byteArrayOf())) {
         buttonText("Analyzing Image, may take a moment")
@@ -141,6 +156,11 @@ fun onAnalyzeImageButtonClick(
                 setAnalysisResult(result)
 
                 navigateToAnotherScreen(ScreenState.ANALYSISRESULTSCREEN, true)
+            } else {
+                buttonText("Analyze Image")
+                buttonBackgroundColor(AppColor.PURPLE)
+
+                error("Couldn't reach Server. Please try again")
             }
         }
     }

@@ -12,12 +12,18 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ChartMaker(a: Int, b: Int) {
+fun ChartMaker(
+    a: Int,
+    b: Int,
+    colorA: Color = Color.Red,
+    colorB: Color = Color.Green
+) {
     // Calculate angles based on the sum of a and b
-    val total = a + b
+    val total = (a + b).coerceAtLeast(1)
     val angleA = (360f * (a / total.toFloat())).coerceIn(0f, 360f)
     val angleB = (360f * (b / total.toFloat())).coerceIn(0f, 360f)
 
@@ -28,7 +34,7 @@ fun ChartMaker(a: Int, b: Int) {
         Canvas(modifier = Modifier.fillMaxSize().padding(25.dp)) {
             // Draw the first arc (red)
             drawArc(
-                color = Color.Red,
+                color = colorA,
                 startAngle = 0f,
                 sweepAngle = angleA,
                 useCenter = false,
@@ -39,7 +45,7 @@ fun ChartMaker(a: Int, b: Int) {
 
             // Draw the second arc (green)
             drawArc(
-                color = Color.Green,
+                color = colorB,
                 startAngle = angleA,
                 sweepAngle = angleB,
                 useCenter = false,
