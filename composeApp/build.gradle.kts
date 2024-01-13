@@ -113,6 +113,8 @@ android {
 dependencies {
     implementation("androidx.core:core:1.10.1")
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.androidx.foundation.android)
+    implementation(libs.androidx.annotation.jvm)
     commonMainApi("dev.icerock.moko:mvvm-core:0.16.1")
     commonMainApi("dev.icerock.moko:mvvm-compose:0.16.1")
     commonMainApi("dev.icerock.moko:mvvm-flow:0.16.1")

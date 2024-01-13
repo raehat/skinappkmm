@@ -2,6 +2,7 @@ package View.HomeScreen
 
 import Data.AnalysisResult
 import Data.Auth
+import Network.addNewScan
 import Network.analyzeImage
 import PhotoSelector.ImagePicker
 import PhotoSelector.rememberBitmapFromBytes
@@ -43,6 +44,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Composable
 fun ScanImageScreen(
@@ -50,7 +53,8 @@ fun ScanImageScreen(
     imagePicker: ImagePicker,
     setImagePickedForAnalysis: (ByteArray) -> Unit,
     setAnalysisResult: (AnalysisResult) -> Unit,
-    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
+    getEmail: () -> String
 ) {
     Box(
         modifier = modifier
@@ -70,7 +74,8 @@ fun ScanImageScreen(
                 imagePicked,
                 setImagePickedForAnalysis,
                 setAnalysisResult,
-                navigateToAnotherScreen
+                navigateToAnotherScreen,
+                getEmail
             ) {
                 error = it
             }
@@ -104,6 +109,7 @@ fun AnalyzeImageButton(
     setImagePickedForAnalysis: (ByteArray) -> Unit,
     setAnalysisResult: (AnalysisResult) -> Unit,
     navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
+    getEmail: () -> String,
     error: (String) -> Unit
 ) {
     var buttonText by remember { mutableStateOf("Analyze Image") }
@@ -124,7 +130,8 @@ fun AnalyzeImageButton(
                 },
                 setImagePickedForAnalysis = setImagePickedForAnalysis,
                 setAnalysisResult = setAnalysisResult,
-                navigateToAnotherScreen = navigateToAnotherScreen
+                navigateToAnotherScreen = navigateToAnotherScreen,
+                getEmail = getEmail
             ) {
                 error(it)
             }
@@ -132,6 +139,7 @@ fun AnalyzeImageButton(
     )
 }
 
+@OptIn(ExperimentalEncodingApi::class)
 fun onAnalyzeImageButtonClick(
     imagePicked: ByteArray,
     buttonText: (String) -> Unit,
@@ -139,7 +147,8 @@ fun onAnalyzeImageButtonClick(
     setImagePickedForAnalysis: (ByteArray) -> Unit,
     setAnalysisResult: (AnalysisResult) -> Unit,
     navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
-    error: (String) -> Unit
+    getEmail: () -> String,
+    error: (String) -> Unit,
 ) {
     if (!imagePicked.contentEquals(byteArrayOf())) {
         buttonText("Analyzing Image, may take a moment")
@@ -154,6 +163,11 @@ fun onAnalyzeImageButtonClick(
 
                 setImagePickedForAnalysis(imagePicked)
                 setAnalysisResult(result)
+                addNewScan(
+                    email = getEmail(),
+                    imageBase64 = Base64.encode(imagePicked),
+                    analysisResult = result.`class`
+                )
 
                 navigateToAnotherScreen(ScreenState.ANALYSISRESULTSCREEN, true)
             } else {

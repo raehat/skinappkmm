@@ -39,7 +39,8 @@ fun HomePage(
     imagePicker: ImagePicker,
     setImagePickedForAnalysis: (ByteArray) -> Unit,
     setAnalysisResult: (AnalysisResult) -> Unit,
-    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
+    getEmail: () -> String
 ) {
     var currentHomePageScreen by remember { mutableStateOf(Screen.USERSCREEN) }
 
@@ -55,7 +56,8 @@ fun HomePage(
             imagePicker,
             setImagePickedForAnalysis,
             setAnalysisResult,
-            navigateToAnotherScreen
+            navigateToAnotherScreen,
+            getEmail
         )
         BottomNavigationDrawer(modifier = Modifier.weight(1.3f)) {
             currentHomePageScreen = it
@@ -70,7 +72,8 @@ fun Screen(
     imagePicker: ImagePicker,
     setImagePickedForAnalysis: (ByteArray) -> Unit,
     setAnalysisResult: (AnalysisResult) -> Unit,
-    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit
+    navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
+    getEmail: () -> String
 ) {
 
     when(currentHomePageScreen) {
@@ -83,7 +86,8 @@ fun Screen(
                 imagePicker,
                 setImagePickedForAnalysis,
                 setAnalysisResult,
-                navigateToAnotherScreen
+                navigateToAnotherScreen,
+                getEmail
             )
         }
         Screen.SETTINGSSCREEN -> {

@@ -107,7 +107,8 @@ fun AppScreen(viewModel: AppViewModel, imagePicker: ImagePicker) {
                 imagePicker,
                 viewModel::setImagePickedForAnalysis,
                 viewModel::setAnalysisResult,
-                viewModel::navigateToAnotherScreen
+                viewModel::navigateToAnotherScreen,
+                viewModel::getEmail
             )
         }
 
