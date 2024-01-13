@@ -40,7 +40,7 @@ fun HomePage(
     setImagePickedForAnalysis: (ByteArray) -> Unit,
     setAnalysisResult: (AnalysisResult) -> Unit,
     navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
-    getEmail: () -> String
+    getEmail: () -> String?
 ) {
     var currentHomePageScreen by remember { mutableStateOf(Screen.USERSCREEN) }
 
@@ -73,7 +73,7 @@ fun Screen(
     setImagePickedForAnalysis: (ByteArray) -> Unit,
     setAnalysisResult: (AnalysisResult) -> Unit,
     navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
-    getEmail: () -> String
+    getEmail: () -> String?
 ) {
 
     when(currentHomePageScreen) {
@@ -91,7 +91,7 @@ fun Screen(
             )
         }
         Screen.SETTINGSSCREEN -> {
-            SettingsScreen(modifier)
+            SettingsScreen()
         }
     }
 }

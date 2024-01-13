@@ -1,7 +1,7 @@
 package View.HomeScreen
 
 import Data.AnalysisResult
-import Data.Auth
+import Data.Network
 import Network.addNewScan
 import Network.analyzeImage
 import PhotoSelector.ImagePicker
@@ -44,7 +44,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Composable
@@ -54,7 +53,7 @@ fun ScanImageScreen(
     setImagePickedForAnalysis: (ByteArray) -> Unit,
     setAnalysisResult: (AnalysisResult) -> Unit,
     navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
-    getEmail: () -> String
+    getEmail: () -> String?
 ) {
     Box(
         modifier = modifier
@@ -109,7 +108,7 @@ fun AnalyzeImageButton(
     setImagePickedForAnalysis: (ByteArray) -> Unit,
     setAnalysisResult: (AnalysisResult) -> Unit,
     navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
-    getEmail: () -> String,
+    getEmail: () -> String?,
     error: (String) -> Unit
 ) {
     var buttonText by remember { mutableStateOf("Analyze Image") }
@@ -120,6 +119,7 @@ fun AnalyzeImageButton(
         buttonText = buttonText,
         backgroundColor = buttonBackgroundColor,
         buttonOnClick = {
+            println("button clicked")
             onAnalyzeImageButtonClick(
                 imagePicked = imagePicked,
                 buttonText = { buttonTextChanged ->
@@ -139,7 +139,6 @@ fun AnalyzeImageButton(
     )
 }
 
-@OptIn(ExperimentalEncodingApi::class)
 fun onAnalyzeImageButtonClick(
     imagePicked: ByteArray,
     buttonText: (String) -> Unit,
@@ -147,7 +146,7 @@ fun onAnalyzeImageButtonClick(
     setImagePickedForAnalysis: (ByteArray) -> Unit,
     setAnalysisResult: (AnalysisResult) -> Unit,
     navigateToAnotherScreen: (ScreenState, Boolean) -> Unit,
-    getEmail: () -> String,
+    getEmail: () -> String?,
     error: (String) -> Unit,
 ) {
     if (!imagePicked.contentEquals(byteArrayOf())) {
@@ -156,7 +155,7 @@ fun onAnalyzeImageButtonClick(
 
         CoroutineScope(Dispatchers.IO).launch {
             val response = analyzeImage(imagePicked)
-            if (response != null && Auth.isSuccessfulResponse(response.status)) {
+            if (response != null && Network.isSuccessfulResponse(response.status)) {
                 buttonText("Analyze Image")
                 buttonBackgroundColor(AppColor.PURPLE)
                 val result = Json.decodeFromString<AnalysisResult>(response.bodyAsText())
@@ -164,8 +163,8 @@ fun onAnalyzeImageButtonClick(
                 setImagePickedForAnalysis(imagePicked)
                 setAnalysisResult(result)
                 addNewScan(
-                    email = getEmail(),
-                    imageBase64 = Base64.encode(imagePicked),
+                    email = getEmail().toString(),
+                    image = imagePicked,
                     analysisResult = result.`class`
                 )
 

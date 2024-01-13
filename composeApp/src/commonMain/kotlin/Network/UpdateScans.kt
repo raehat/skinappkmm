@@ -1,35 +1,40 @@
 package Network
 
-import Data.AnalysisResult
-import Data.Auth
-import Data.NewScan
-import Data.VerifiedUser
+import Data.Network
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
 import io.ktor.client.request.post
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import io.ktor.util.InternalAPI
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 @OptIn(InternalAPI::class)
 suspend fun addNewScan(
     email: String,
-    imageBase64: String,
+    image: ByteArray,
     analysisResult: String
 ) : Boolean {
     try {
-        val jsonBody = Json.encodeToString(
-            NewScan(
-                email,
-                imageBase64,
-                analysisResult
-            )
+        val formData = MultiPartFormDataContent(
+            formData {
+                append("email", email)
+                append("analysisResult", analysisResult)
+
+                append(
+                    "image",
+                    image,
+                    Headers.build {
+                        append(HttpHeaders.ContentType, "files/*")
+                        append(HttpHeaders.ContentDisposition, "filename=image.jpeg")
+                    }
+                )
+            }
         )
-        val response = Auth.client.post("${Auth.URL}/new_scan_added") {
-            body = jsonBody
-            contentType(ContentType.Application.Json)
+
+        val response = Network.client.post("${Network.URL}/new_scan_added") {
+            body = formData
         }
-        return Auth.isSuccessfulResponse(response.status)
+        return Network.isSuccessfulResponse(response.status)
 
     } catch (e: Exception) {
         e.printStackTrace()

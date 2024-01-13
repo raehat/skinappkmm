@@ -2,9 +2,9 @@
 
 package Network
 
-import Data.Auth.URL
-import Data.Auth.client
-import Data.Auth.isSuccessfulResponse
+import Data.Network.URL
+import Data.Network.client
+import Data.Network.isSuccessfulResponse
 import Data.UpdateForgotPassword
 import Data.VerifiedUser
 import Data.VerifyOTP
@@ -13,8 +13,6 @@ import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.util.InternalAPI
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

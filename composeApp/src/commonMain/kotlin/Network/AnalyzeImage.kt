@@ -1,8 +1,7 @@
 package Network
 
-import Data.Auth
+import Data.Network
 import Data.LesionImage
-import Data.VerifiedUser
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
@@ -17,7 +16,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 suspend fun analyzeImage(image: ByteArray) : HttpResponse? {
     try {
         val encodedImage = Base64.encode(image)
-        val response = Auth.client.post("${Auth.ML_URL}/predict") {
+        val response = Network.client.post("${Network.ML_URL}/predict") {
             body = Json.encodeToString(
                 LesionImage(
                     image_data = encodedImage

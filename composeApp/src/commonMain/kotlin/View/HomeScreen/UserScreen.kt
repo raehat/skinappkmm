@@ -113,6 +113,7 @@ fun LastScans() {
             modifier = Modifier
                 .horizontalScroll(rememberScrollState())
         ) {
+
             ScanItem()
             ScanItem()
             ScanItem()
