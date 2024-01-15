@@ -54,7 +54,7 @@ fun VerifyCodeScreen(
         var error by remember { mutableStateOf("") }
 
         BackButton(navigateToLastScreen)
-        Header("Verify Code", "Please enter the code we just sent to example@email.com.", 20.dp)
+        Header("Verify Code", "Please enter the code we just sent to ${getEmail()}.", 20.dp)
         PinView() {
             pin = it
         }
