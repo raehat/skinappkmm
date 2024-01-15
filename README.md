@@ -45,7 +45,8 @@ If you want to run the backend locally, follow through
 
 Node js app will run on http://localhost:3000/. Open Twacha Kotlin Application in Android Studio. Go to Twacha -> composeApp -> src -> commonMain -> kotlin -> Data -> Network.kt
 
-You will find AUTH_URL here ![Screenshot 2024-01-16 022041](https://github.com/raehat/twacha/assets/77321971/87caf053-3fd1-4ed2-ba76-63eea9e6b0b8)
+You will find AUTH_URL here ![Screenshot 2024-01-16 022041](https://github.com/raehat/twacha/assets/77321971/87caf053-3fd1-4ed2-ba76-63eea9e6b0b8)  
+
 Replace original value of AUTH_URL with http://localhost:3000/
 
 If you want to run flask app with ML Model locally, follow through
@@ -62,5 +63,6 @@ If you want to run flask app with ML Model locally, follow through
 
 Flask App will run on http://localhost:5000/. Open Twacha Kotlin Application in Android Studio. Go to Twacha -> composeApp -> src -> commonMain -> kotlin -> Data -> Network.kt
 
-You will find ML_URL here ![Screenshot 2024-01-16 022645](https://github.com/raehat/twacha/assets/77321971/33643b3b-f814-43f7-aa5e-83d4f96ebcec)
+You will find ML_URL here ![Screenshot 2024-01-16 022645](https://github.com/raehat/twacha/assets/77321971/33643b3b-f814-43f7-aa5e-83d4f96ebcec)  
+
 Replace original value of ML_URL with http://localhost:3000/
