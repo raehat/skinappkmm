@@ -13,15 +13,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +38,9 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -48,6 +50,23 @@ fun UserScreen(getEmail: () -> String?) {
         modifier = Modifier
             .background(AppColor.LIGHT_GRAY)
     ) {
+        var isProgressIndicatorVisible by remember { mutableStateOf(true) }
+        val strokeWidth = 5.dp
+
+        if (isProgressIndicatorVisible) {
+            CircularProgressIndicator(
+                modifier = Modifier.drawBehind {
+                    drawCircle(
+                        Color.Blue,
+                        radius = size.width / 2 - strokeWidth.toPx() / 2,
+                        style = Stroke(strokeWidth.toPx())
+                    )
+                }
+                    .align(Alignment.Center),
+                color = Color.LightGray,
+                strokeWidth = strokeWidth
+            )
+        }
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -56,7 +75,9 @@ fun UserScreen(getEmail: () -> String?) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AboutApp()
-            LastScans(getEmail)
+            LastScans(getEmail) {
+                isProgressIndicatorVisible = it
+            }
             ScanHistory(getEmail)
         }
     }
@@ -125,7 +146,7 @@ fun ScanHistoryText(text: String, number: String) {
 }
 
 @Composable
-fun LastScans(getEmail: () -> String?) {
+fun LastScans(getEmail: () -> String?, isProgressIndicatorVisible: (Boolean) -> Unit) {
     var scans by remember { mutableStateOf(Scans()) }
     Column(
         modifier = Modifier
@@ -145,6 +166,7 @@ fun LastScans(getEmail: () -> String?) {
                 if (getScans != null) {
                     scans = getScans
                 }
+                isProgressIndicatorVisible(false)
             }
             if (scans.scans.isEmpty()) {
                 Text(

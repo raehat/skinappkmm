@@ -90,7 +90,7 @@ fun ResultText(result: String) {
             text = "RESULT",
             fontWeight = FontWeight.Bold
         )
-        Text(text = "Melanomia")
+        Text(text = result)
     }
 }
 

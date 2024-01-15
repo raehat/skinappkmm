@@ -1,6 +1,8 @@
 package View.LoginSignup
 
 import Network.checkOTPForgotPassword
+import Network.sendOTPForgotPassword
+import Network.signUp
 import Network.verifyOTP
 import ScreenState
 import androidx.compose.foundation.border
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -29,6 +32,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -52,7 +58,9 @@ fun VerifyCodeScreen(
         PinView() {
             pin = it
         }
-        ResendOTPView()
+        ResendOTPView(getEmail, lastScreen()) {
+            error = it
+        }
         Text(
             text = error
         )
@@ -79,7 +87,7 @@ fun VerifyCodeScreen(
                             otp = pin
                         )
                         if (success) {
-                            navigateToAnotherScreen(ScreenState.HOMEPAGE)
+                            navigateToAnotherScreen(ScreenState.SIGNINSCREEN)
                         } else {
                             error = "Wrong OTP, try again"
                         }
@@ -93,7 +101,7 @@ fun VerifyCodeScreen(
 }
 
 @Composable
-fun ResendOTPView() {
+fun ResendOTPView(getEmail: () -> String, lastScreen: ScreenState?, error: (String) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -104,11 +112,31 @@ fun ResendOTPView() {
             text = "Didn't receive OTP?",
             fontSize = 14.sp
         )
-        Text(
-            text = "Resend OTP",
-            textDecoration = TextDecoration.Underline,
-            fontSize = 14.sp,
-            color = Color.Blue
+        val annotatedString = buildAnnotatedString {
+            withStyle(
+                style = SpanStyle(
+                    color = Color.Blue,
+                    textDecoration = TextDecoration.Underline
+                )
+            ) {
+                append("Resend OTP")
+            }
+        }
+        ClickableText(
+            onClick = {
+                CoroutineScope(Dispatchers.IO).launch {
+                    when (lastScreen) {
+                        ScreenState.SIGNINSCREEN -> {
+                            sendOTPForgotPassword(getEmail())
+                            error("OTP Resent")
+                        }
+                        else -> {
+                            error("Cannot Resend OTP")
+                        }
+                    }
+                }
+            },
+            text = annotatedString
         )
     }
 }

@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
@@ -37,7 +38,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -69,6 +72,24 @@ fun SignIn(
             .fillMaxSize()
             .background(Color.White)
     ) {
+        var isProgressIndicatorVisible by remember { mutableStateOf(false) }
+        val strokeWidth = 5.dp
+
+        if (isProgressIndicatorVisible) {
+            CircularProgressIndicator(
+                modifier = Modifier.drawBehind {
+                    drawCircle(
+                        Color.Blue,
+                        radius = size.width / 2 - strokeWidth.toPx() / 2,
+                        style = Stroke(strokeWidth.toPx())
+                    )
+                }
+                    .align(Alignment.Center),
+                color = Color.LightGray,
+                strokeWidth = strokeWidth
+            )
+        }
+
         Column(modifier = Modifier
             .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -92,7 +113,7 @@ fun SignIn(
                 getEmail,
                 setEmail,
                 saveLoginEmail
-            )
+            ) { isProgressIndicatorVisible = it }
             DividerWithText()
 //            Row(
 //               modifier = Modifier.fillMaxWidth(0.5f)
@@ -155,11 +176,18 @@ fun SignInUpButton(
     password: String,
     getEmail: () -> String,
     setEmail: (String) -> Unit,
-    saveLoginEmail: (String) -> Unit
+    saveLoginEmail: (String) -> Unit,
+    isProgressVisible: (Boolean) -> Unit
 ) {
     var error by remember { mutableStateOf("") }
+    var buttonText by remember { mutableStateOf(
+        if (currentScreen() == ScreenState.SIGNUPSCREEN)
+            "Sign Up"
+        else
+            "Sign In"
+    ) }
     TwachaButton(
-        buttonText =  if (currentScreen() == ScreenState.SIGNUPSCREEN) "Sign Up" else "Sign In"
+        buttonText =  buttonText
     ) {
         signInUp(
             navigateToAnotherScreen,
@@ -168,10 +196,11 @@ fun SignInUpButton(
             password,
             getEmail,
             setEmail,
-            saveLoginEmail
-        ) {
-            error = it
-        }
+            saveLoginEmail,
+            { buttonText = it },
+            { isProgressVisible(it) },
+            { error = it }
+        )
     }
     Text(
         modifier = Modifier
@@ -189,11 +218,17 @@ fun signInUp(
     getEmail: () -> String,
     setEmail: (String) -> Unit,
     saveLoginEmail: (String) -> Unit,
+    buttonText: (String) -> Unit,
+    isProgressVisible: (Boolean) -> Unit,
     onError: (String) -> Unit
 ) {
     if (currentScreen() == ScreenState.SIGNUPSCREEN) {
         CoroutineScope(Dispatchers.IO).launch {
+            buttonText("Loading...")
+            isProgressVisible(true)
             val otpSendSuccess = signUp(email = email, password = password)
+            buttonText("Sign Up")
+            isProgressVisible(false)
             if (otpSendSuccess) {
                 setEmail(email)
                 navigateToAnotherScreen(ScreenState.VERIFYCODESCREEN, true)
@@ -204,7 +239,11 @@ fun signInUp(
         }
     } else if (currentScreen() == ScreenState.SIGNINSCREEN) {
         CoroutineScope(Dispatchers.IO).launch {
+            buttonText("Loading...")
+            isProgressVisible(true)
             val loginSuccess = login(email = email, password = password)
+            buttonText("Sign In")
+            isProgressVisible(false)
             if (loginSuccess) {
                 setEmail(email)
                 saveLoginEmail(email)

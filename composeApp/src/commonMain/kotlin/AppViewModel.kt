@@ -100,4 +100,9 @@ class AppViewModel(private val sharedPreferencesManager: SharedPreferencesManage
     fun getAnalysisResult() : AnalysisResult {
         return analysisResult
     }
+
+    fun logout() {
+        saveLoginEmail("")
+        navigateToAnotherScreen(ScreenState.SIGNINSCREEN)
+    }
 }
