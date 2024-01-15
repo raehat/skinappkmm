@@ -18,13 +18,16 @@ Almost all code is shared and in kotlin.
 # How to run Twacha
 
 Twacha is a kotlin based project. However, it has authentication included as well as it stores data on mongoDB. So there is a backend written in node js for Twacha as well. 
-The backend is deployed on vercel. You can find the backend code here https://github.com/raehat/twachabackend. The code is deployed on https://skinappkmmbackend.vercel.app/ 
+The backend is deployed on vercel.  
+You can find the backend code [here]([url](https://github.com/raehat/twachabackend)).  
+The code is deployed [here]([url](https://skinappkmmbackend.vercel.app/ ))
 
 To analyze image and produce results, a ML model is written in python and compiled with pytorch. 
-You can find the jupyter notebook here https://drive.google.com/drive/folders/1DjtGW9PrzQrFjsMVBr1db6qtj3sjGc5J?usp=sharing 
+You can find the jupyter notebook [here]([url](https://drive.google.com/drive/folders/1DjtGW9PrzQrFjsMVBr1db6qtj3sjGc5J?usp=sharing ))   
 
 ML Model is deployed in a flask app. Flask app is deployed on railway and Twacha app communicates with this flask app to analyze images with skin lesions. 
-Flask App code can be found here https://github.com/raehat/twacha-ML-backend. Flask app is deployed on https://flask-production-9f74.up.railway.app/
+Flask App code can be found [here]([url](https://github.com/raehat/twacha-ML-backend)).  
+Flask app is deployed [here]([url](https://flask-production-9f74.up.railway.app/))
 
 1) Open terminal
 2) Run command
