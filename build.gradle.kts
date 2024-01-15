@@ -16,4 +16,5 @@ plugins {
     alias(libs.plugins.jetbrainsCompose) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
     kotlin("plugin.serialization") version "1.4.32"
+    id("com.louiscad.complete-kotlin") version "1.1.0"
 }
