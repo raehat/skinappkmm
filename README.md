@@ -8,7 +8,7 @@ In most cases, it might be something harmless, but there's a less probable chanc
 
 # How is Twacha built
 
-Twacha is built using kotlin multiplatform support and [compose multiplatform]([url](https://www.jetbrains.com/lp/compose-multiplatform/)https://www.jetbrains.com/lp/compose-multiplatform/)
+Twacha is built using kotlin multiplatform support and [compose multiplatform]([url](https://www.jetbrains.com/lp/compose-multiplatform/)https://www.jetbrains.com/lp/compose-multiplatform/)  
 Almost all code is shared and in kotlin. 
 
 # How to run Twacha
