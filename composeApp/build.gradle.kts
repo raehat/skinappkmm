@@ -1,7 +1,5 @@
 import dev.icerock.gradle.MRVisibility
 import org.jetbrains.compose.ExperimentalComposeLibrary
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -12,16 +10,6 @@ plugins {
 }
 
 kotlin {
-//    @OptIn(ExperimentalWasmDsl::class)
-//    wasmJs {
-//        moduleName = "composeApp"
-//        browser {
-//            commonWebpackConfig {
-//                outputFileName = "composeApp.js"
-//            }
-//        }
-//        binaries.executable()
-//    }
     
     androidTarget {
         compilations.all {
@@ -30,8 +18,7 @@ kotlin {
             }
         }
     }
-    
-//    jvm("desktop")
+
     
     listOf(
         iosX64(),
@@ -45,7 +32,6 @@ kotlin {
     }
     
     sourceSets {
-//        val desktopMain by getting
 
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
@@ -66,9 +52,6 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
-//        desktopMain.dependencies {
-//            implementation(compose.desktop.currentOs)
-//        }
     }
 }
 
@@ -125,19 +108,6 @@ dependencies {
     commonTestImplementation("dev.icerock.moko:resources-test:0.23.0")
     commonMainApi("io.ktor:ktor-serialization:2.3.7")
 }
-
-
-//compose.desktop {
-//    application {
-//        mainClass = "MainKt"
-//
-//        nativeDistributions {
-//            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-//            packageName = "com.example.twacha"
-//            packageVersion = "1.0.0"
-//        }
-//    }
-//}
 
 compose.experimental {
     web.application {}
