@@ -2,7 +2,7 @@
 
 package Network
 
-import Data.Network.URL
+import Data.Network.AUTH_URL
 import Data.Network.client
 import Data.Network.isSuccessfulResponse
 import Data.UpdateForgotPassword
@@ -18,7 +18,7 @@ import kotlinx.serialization.json.Json
 
 suspend fun signUp(email: String, password: String) : Boolean {
     try {
-        val response = client.post("$URL/signup") {
+        val response = client.post("$AUTH_URL/signup") {
             body = Json.encodeToString(
                 VerifiedUser(
                     email = email,
@@ -37,7 +37,7 @@ suspend fun signUp(email: String, password: String) : Boolean {
 
 suspend fun verifyOTP(email: String, otp: String) : Boolean {
     try {
-        val response = client.post("$URL/verify_otp") {
+        val response = client.post("$AUTH_URL/verify_otp") {
             body = Json.encodeToString(
                 VerifyOTP(email = email, otp = otp)
             )
@@ -53,7 +53,7 @@ suspend fun verifyOTP(email: String, otp: String) : Boolean {
 
 suspend fun login(email: String, password: String) : Boolean {
     try {
-        val response = client.post("$URL/login") {
+        val response = client.post("$AUTH_URL/login") {
             body = Json.encodeToString(
                 VerifiedUser(
                     email = email,
@@ -72,7 +72,7 @@ suspend fun login(email: String, password: String) : Boolean {
 
 suspend fun sendOTPForgotPassword(email: String) : Boolean {
     try {
-        val response = client.post("$URL/forgot_password") {
+        val response = client.post("$AUTH_URL/forgot_password") {
             body = Json.encodeToString(
                 VerifyOTPForgotPassword(
                     email = email
@@ -90,7 +90,7 @@ suspend fun sendOTPForgotPassword(email: String) : Boolean {
 
 suspend fun checkOTPForgotPassword(email: String, otp: String) : Boolean {
     try {
-        val response = client.post("$URL/verify_otp_forgot_password") {
+        val response = client.post("$AUTH_URL/verify_otp_forgot_password") {
             body = Json.encodeToString(
                 VerifyOTP(
                     email = email,
@@ -109,7 +109,7 @@ suspend fun checkOTPForgotPassword(email: String, otp: String) : Boolean {
 
 suspend fun updateForgotPassword(email: String, password: String, otp: String) : Boolean {
     try {
-        val response = client.post("$URL/update_password") {
+        val response = client.post("$AUTH_URL/update_password") {
             body = Json.encodeToString(
                 UpdateForgotPassword(
                     email = email,

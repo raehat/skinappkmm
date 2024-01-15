@@ -5,7 +5,7 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.HttpStatusCode
 
 object Network {
-    const val URL = "https://skinappkmmbackend.vercel.app"
+    const val AUTH_URL = "https://skinappkmmbackend.vercel.app"
     const val ML_URL = "https://flask-production-9f74.up.railway.app"
 
     val client = HttpClient() {
