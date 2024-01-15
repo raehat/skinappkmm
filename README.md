@@ -8,7 +8,7 @@ In most cases, it might be something harmless, but there's a less probable chanc
 
 # Video Demonstration
 
-[(![Screenshot 2024-01-16 031106](https://github.com/raehat/twacha/assets/77321971/e43e2f3c-41d7-4223-8f2c-f92e0c31d39f))](https://youtu.be/7PVyjJ4y-W4)
+[![Screenshot 2024-01-16 031106](https://github.com/raehat/twacha/assets/77321971/e43e2f3c-41d7-4223-8f2c-f92e0c31d39f)](https://youtu.be/7PVyjJ4y-W4)
 
 # How is Twacha built
 
