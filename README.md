@@ -20,6 +20,47 @@ To analyze image and produce results, a ML model is written in python and compil
 You can find the jupyter notebook here https://drive.google.com/drive/folders/1DjtGW9PrzQrFjsMVBr1db6qtj3sjGc5J?usp=sharing 
 
 ML Model is deployed in a flask app. Flask app is deployed on railway and Twacha app communicates with this flask app to analyze images with skin lesions. 
-Flask App code can be found here https://github.com/raehat/twacha-ML-backend
-Flask app is deployed on https://flask-production-9f74.up.railway.app/
+Flask App code can be found here https://github.com/raehat/twacha-ML-backend. Flask app is deployed on https://flask-production-9f74.up.railway.app/
 
+1) Open terminal
+2) Run command
+   ```git clone https://github.com/raehat/twacha```
+3) Run command
+   ```cd twacha```
+4) Open project in Android Studio
+
+You can build the android app as well as ios app from android studio. 
+
+If you want to run the backend locally, follow through
+
+1) Open terminal
+2) Run command
+```https://github.com/raehat/twachabackend```
+3) Run command
+```cd twachabackend```
+4) Run command
+```npm install```
+5) Run command
+```npm start```
+
+Node js app will run on http://localhost:3000/. Open Twacha Kotlin Application in Android Studio. Go to Twacha -> composeApp -> src -> commonMain -> kotlin -> Data -> Network.kt
+
+You will find AUTH_URL here ![Screenshot 2024-01-16 022041](https://github.com/raehat/twacha/assets/77321971/87caf053-3fd1-4ed2-ba76-63eea9e6b0b8)
+Replace original value of AUTH_URL with http://localhost:3000/
+
+If you want to run flask app with ML Model locally, follow through
+
+1) Open terminal
+2) Run command
+```https://github.com/raehat/twacha-ML-backend```
+3) Run command
+```twacha-ML-backend```
+4) Run command
+```pip install requirementx.txt```
+5) Run command
+```python app.py```
+
+Flask App will run on http://localhost:5000/. Open Twacha Kotlin Application in Android Studio. Go to Twacha -> composeApp -> src -> commonMain -> kotlin -> Data -> Network.kt
+
+You will find ML_URL here ![Screenshot 2024-01-16 022645](https://github.com/raehat/twacha/assets/77321971/33643b3b-f814-43f7-aa5e-83d4f96ebcec)
+Replace original value of ML_URL with http://localhost:3000/
