@@ -6,9 +6,9 @@ In most cases, it might be something harmless, but there's a less probable chanc
 
 *It's worth noting that Twacha's results may not always be definitive. Therefore, it is essential to use the app as a supplementary tool and not as a substitute for professional medical advice.*
 
-#Video Demonstration
+# Video Demonstration
 
-[![](![Screenshot 2024-01-16 031106](https://github.com/raehat/twacha/assets/77321971/e43e2f3c-41d7-4223-8f2c-f92e0c31d39f))](https://youtu.be/7PVyjJ4y-W4)
+[(![Screenshot 2024-01-16 031106](https://github.com/raehat/twacha/assets/77321971/e43e2f3c-41d7-4223-8f2c-f92e0c31d39f))](https://youtu.be/7PVyjJ4y-W4)
 
 # How is Twacha built
 
