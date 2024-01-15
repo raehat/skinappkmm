@@ -26,6 +26,8 @@ To analyze image and produce results, a ML model is written in python and compil
 ML Model is deployed in a flask app. Flask app is deployed on railway and Twacha app communicates with this flask app to analyze images with skin lesions. Flask App code can be found here https://github.com/raehat/twacha-ML-backend.  
 Flask app is deployed on https://flask-production-9f74.up.railway.app/  
 
+To run mobile app, follow through 
+
 1) Open terminal
 2) Run command
    ```git clone https://github.com/raehat/twacha```
